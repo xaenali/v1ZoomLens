@@ -18,7 +18,7 @@ namespace BXwithZemax
 {
     class Program
     {
-        public static double InputMax, InputMin, InputbeamDia, EPDConstrain, Mind1, Mind2, SelF1, SelF2, SelF3;
+        public static double InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2, SelF1, SelF2, SelF3;
         public static List<double> Temp1 = new List<double>();
         public static List<double> Temp2 = new List<double>();
         public static IList<double> MaxtrackList = new List<double>();
@@ -42,7 +42,9 @@ namespace BXwithZemax
         public static List<double> EPD1 = new List<double>(); // Initialize List for Entrance pupil Dia 1
         public static List<double> EPD2 = new List<double>(); // Initialize List for Entrance pupil Dia  2
         public static List<double> EPD3 = new List<double>(); // Initialize List for fEntrance pupil Dia  3
-
+        public static List<double> EPD1List = new List<double>(); // Initialize List for Entrance pupil Dia 1
+        public static List<double> EPD2List = new List<double>(); // Initialize List for Entrance pupil Dia  2
+        public static List<double> EPD3List = new List<double>(); // Initialize List for fEntrance pupil Dia  3
 
 
         static void Main(string[] args)
@@ -93,7 +95,9 @@ namespace BXwithZemax
 
                 //Introduce Inputbeamdia and EPD constrain
 
-                EPDConstrain = (double)1.5 * InputbeamDia;
+                EPDConstrainF1 = (double)1.5 * InputbeamDia;
+
+                EPDConstrainF3 = (double)(1 / InputMin) * 1.5 * InputbeamDia;
 
                 Console.WriteLine("\n");
 
@@ -290,138 +294,154 @@ namespace BXwithZemax
 
                         //comparison with Mx and My magnifications
 
-                        if ((Mx[m] > MxratioMy[m]) && (MxratioMy[m] > My[m]) && (InputMax <= Mx[m]) && (InputMin >= My[m]) && (InputMax > InputMin) && (EPD1[k] > EPDConstrain) && (EPD1[k] == EPD2[k]))
+                        if (EPD1[k] >= EPDConstrainF1)
                         {
-                            n = n + 1;
-
-                            Console.WriteLine("number of combination = {0} ", n);
-
-                            Console.WriteLine("Conditions satified for comination {0}", n);
-
-                            Console.WriteLine("take Mx as {0} and My as {1} with F1 as {2}, F2 as {3} and F3 as {4}", Mx[m], My[m], focallength1[k], focallength2[l], focallength3[m]);
-
-
-
-                            //Calculate d1 and d2 for the Input Max and Min Magnification
-
-                            d1forInputMax[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (InputMax * focallength3[m])), 4);
-
-                            d2forInputMax[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * InputMax) / (focallength1[l])), 4);
-
-                            // Check for very small negative distance value and convert them to zero
-
-                            if ((d1forInputMax[m] >= -0.012) && (d1forInputMax[m] < 0))
+                            if (EPD3[m] >= EPDConstrainF3 && EPD2[l] != EPD3[m])
                             {
-                                d1forInputMax[m] = 0;
-                            }
-                            else
-
-                                if ((d2forInputMax[m] >= -0.012) && (d2forInputMax[m] < 0))
+                                if ((Mx[m] > MxratioMy[m]) && (MxratioMy[m] > My[m]) && (InputMax <= Mx[m]) && (InputMin >= My[m]) && (InputMax > InputMin))
                                 {
-                                    d2forInputMax[m] = 0;
+                                    n = n + 1;
+
+                                    Console.WriteLine("number of combination = {0} ", n);
+
+                                    Console.WriteLine("Conditions satified for comination {0}", n);
+
+                                    Console.WriteLine("take Mx as {0} and My as {1} with F1 as {2}, F2 as {3} and F3 as {4}", Mx[m], My[m], focallength1[k], focallength2[l], focallength3[m]);
+
+
+
+                                    //Calculate d1 and d2 for the Input Max and Min Magnification
+
+                                    d1forInputMax[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (InputMax * focallength3[m])), 4);
+
+                                    d2forInputMax[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * InputMax) / (focallength1[l])), 4);
+
+                                    // Check for very small negative distance value and convert them to zero
+
+                                    if ((d1forInputMax[m] >= -0.012) && (d1forInputMax[m] < 0))
+                                    {
+                                        d1forInputMax[m] = 0;
+                                    }
+                                    else
+
+                                        if ((d2forInputMax[m] >= -0.012) && (d2forInputMax[m] < 0))
+                                        {
+                                            d2forInputMax[m] = 0;
+                                        }
+
+                                    Console.WriteLine("The system has d1 = {0} and d2 = {1} for Max magnification Input = {2} ", d1forInputMax[m], d2forInputMax[m], InputMax);
+
+                                    d1forInputMin[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (InputMin * focallength3[m])), 4);
+
+                                    d2forInputMin[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * InputMin) / (focallength1[k])), 4);
+
+                                    if ((d1forInputMin[m] >= -0.012) && (d1forInputMin[m] < 0))
+                                    {
+                                        d1forInputMin[m] = 0;
+                                    }
+                                    else
+
+                                        if ((d2forInputMin[m] >= -0.012) && (d2forInputMin[m] < 0))
+                                        {
+                                            d2forInputMin[m] = 0;
+                                        }
+
+                                    Console.WriteLine("The system has d1 = {0} and d2 = {1} for Min magnification Input = {2} ", d1forInputMin[m], d2forInputMin[m], InputMin);
+
+
+                                    // Calculate Max d1 and d2 for Max magnification
+
+                                    d1forMx[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (Mx[m] * focallength3[m])), 4);
+
+                                    d2forMx[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * Mx[m]) / (focallength1[k])), 4);
+
+                                    if ((d1forMx[m] >= -0.012) && (d1forMx[m] < 0))
+                                    {
+                                        d1forMx[m] = 0;
+                                    }
+                                    else
+
+                                        if ((d2forMx[m] >= -0.012) && (d2forMx[m] < 0))
+                                        {
+                                            d2forMx[m] = 0;
+                                        }
+
+                                    Console.WriteLine("The system has d1 = {0} and d2 = {1} for Maximum Magnification possible = {2} ", d1forMx[m], d2forMx[m], Mx[m]);
+
+
+                                    // Calculate d1 and d2 for Minimum magnification
+
+                                    d1forMy[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (My[m] * focallength3[m])), 4);
+
+                                    d2forMy[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * My[m]) / (focallength1[k])), 4);
+
+                                    if ((d1forMy[m] >= -0.012) && (d1forMy[m] < 0))
+                                    {
+                                        d1forMy[m] = 0;
+                                    }
+                                    else
+
+                                        if ((d2forMy[m] >= -0.012) && (d2forMy[m] < 0))
+                                        {
+                                            d2forMy[m] = 0;
+                                        }
+
+                                    Console.WriteLine("The system has d1 = {0} and d2 = {1} for Mimimum Magnification possible = {2} ", d1forMy[m], d2forMy[m], My[m]);
+
+
+                                    // Calculate Max track length and d1 and d2 for that
+
+                                    Maxtrack[m] = Math.Round((double)focallength1[k] + 2 * focallength2[l] + focallength3[m] + (focallength2[l] * (((focallength3[m] * MxratioMy[m]) / focallength1[k]) + focallength1[k] / (focallength3[m] * MxratioMy[m]))), 4);
+
+
+                                    Console.WriteLine("The total system length (d1+d2) = {0} for Magnification = {1} with F1 = {2}, F2 = {3} and F3 = {4} ", Maxtrack[m], MxratioMy[m], focallength1[k], focallength2[l], focallength3[m]);
+
+                                    d1forMxratioMy[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (MxratioMy[m] * focallength3[m])), 4);
+
+                                    d2forMxratioMy[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * MxratioMy[m]) / (focallength1[k])), 4);
+
+                                    if ((d1forMxratioMy[m] >= -0.012) && (d1forMxratioMy[m] < 0))
+                                    {
+                                        d1forMxratioMy[m] = 0;
+                                    }
+                                    else
+
+                                        if ((d2forMxratioMy[m] >= -0.012) && (d2forMxratioMy[m] < 0))
+                                        {
+                                            d2forMxratioMy[m] = 0;
+                                        }
+
+                                    Console.WriteLine("The system has maximum length with d1 = {0} and d2 = {1} and Magnification = {2} ", d1forMxratioMy[m], d2forMxratioMy[m], MxratioMy[m]);
+
+
                                 }
 
-                            Console.WriteLine("The system has d1 = {0} and d2 = {1} for Max magnification Input = {2} ", d1forInputMax[m], d2forInputMax[m], InputMax);
-
-                            d1forInputMin[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (InputMin * focallength3[m])), 4);
-
-                            d2forInputMin[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * InputMin) / (focallength1[k])), 4);
-
-                            if ((d1forInputMin[m] >= -0.012) && (d1forInputMin[m] < 0))
-                            {
-                                d1forInputMin[m] = 0;
                             }
-                            else
-
-                                if ((d2forInputMin[m] >= -0.012) && (d2forInputMin[m] < 0))
-                                {
-                                    d2forInputMin[m] = 0;
-                                }
-
-                            Console.WriteLine("The system has d1 = {0} and d2 = {1} for Min magnification Input = {2} ", d1forInputMin[m], d2forInputMin[m], InputMin);
-
-
-                            // Calculate Max d1 and d2 for Max magnification
-
-                            d1forMx[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (Mx[m] * focallength3[m])), 4);
-
-                            d2forMx[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * Mx[m]) / (focallength1[k])), 4);
-
-                            if ((d1forMx[m] >= -0.012) && (d1forMx[m] < 0))
-                            {
-                                d1forMx[m] = 0;
-                            }
-                            else
-
-                                if ((d2forMx[m] >= -0.012) && (d2forMx[m] < 0))
-                                {
-                                    d2forMx[m] = 0;
-                                }
-
-                            Console.WriteLine("The system has d1 = {0} and d2 = {1} for Maximum Magnification possible = {2} ", d1forMx[m], d2forMx[m], Mx[m]);
-
-
-                            // Calculate d1 and d2 for Minimum magnification
-
-                            d1forMy[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (My[m] * focallength3[m])), 4);
-
-                            d2forMy[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * My[m]) / (focallength1[k])), 4);
-
-                            if ((d1forMy[m] >= -0.012) && (d1forMy[m] < 0))
-                            {
-                                d1forMy[m] = 0;
-                            }
-                            else
-
-                                if ((d2forMy[m] >= -0.012) && (d2forMy[m] < 0))
-                                {
-                                    d2forMy[m] = 0;
-                                }
-
-                            Console.WriteLine("The system has d1 = {0} and d2 = {1} for Mimimum Magnification possible = {2} ", d1forMy[m], d2forMy[m], My[m]);
-
-
-                            // Calculate Max track length and d1 and d2 for that
-
-                            Maxtrack[m] = Math.Round((double)focallength1[k] + 2 * focallength2[l] + focallength3[m] + (focallength2[l] * (((focallength3[m] * MxratioMy[m]) / focallength1[k]) + focallength1[k] / (focallength3[m] * MxratioMy[m]))), 4);
-
-
-                            Console.WriteLine("The total system length (d1+d2) = {0} for Magnification = {1} with F1 = {2}, F2 = {3} and F3 = {4} ", Maxtrack[m], MxratioMy[m], focallength1[k], focallength2[l], focallength3[m]);
-
-                            d1forMxratioMy[m] = Math.Round((double)focallength1[k] + focallength2[l] + ((focallength1[k] * focallength2[l]) / (MxratioMy[m] * focallength3[m])), 4);
-
-                            d2forMxratioMy[m] = Math.Round((double)focallength2[l] + focallength3[m] + ((focallength2[l] * focallength3[m] * MxratioMy[m]) / (focallength1[k])), 4);
-
-                            if ((d1forMxratioMy[m] >= -0.012) && (d1forMxratioMy[m] < 0))
-                            {
-                                d1forMxratioMy[m] = 0;
-                            }
-                            else
-
-                                if ((d2forMxratioMy[m] >= -0.012) && (d2forMxratioMy[m] < 0))
-                                {
-                                    d2forMxratioMy[m] = 0;
-                                }
-
-                            Console.WriteLine("The system has maximum length with d1 = {0} and d2 = {1} and Magnification = {2} ", d1forMxratioMy[m], d2forMxratioMy[m], MxratioMy[m]);
-
-
                         }
+
 
 
                         else
 
-                            if ((MxratioMy[m] > Mx[m]) || (My[m] > MxratioMy[m]) || (InputMax > Mx[m]) || (InputMin < My[m]) || (InputMax < InputMin) || (EPD1[k] < EPDConstrain) || (EPD1[k] != EPD2[k]))
+                            if (EPD1[k] < EPDConstrainF1)
                             {
-                                n = n + 1;
+                                if(EPD3[m] < EPDConstrainF3 || EPD2[l] == EPD3[m])
+                                {
+                                    if ((MxratioMy[m] > Mx[m]) || (My[m] > MxratioMy[m]) || (InputMax > Mx[m]) || (InputMin < My[m]) || (InputMax < InputMin))
+                                    {
+                                        n = n + 1;
 
-                                //Console.WriteLine("number of combination = {0} ", n);
+                                        //Console.WriteLine("number of combination = {0} ", n);
 
-                                //Console.WriteLine("Conditions didn't satified for comination {0}", n);
+                                        //Console.WriteLine("Conditions didn't satified for comination {0}", n);
 
-                                //Console.WriteLine("Can't choose InputMax = {0} and InputMin = {1} as InputMax ({0}) > Calculated Mx {2} or InputMin ({1}) < calculated My {3} with F1 as {4}, F2 as {5} and F3 as {6} ", InputMax, InputMin, Mx[m], My[m], focallength1[k], focallength2[l], focallength3[m]);
+                                        //Console.WriteLine("Can't choose InputMax = {0} and InputMin = {1} as InputMax ({0}) > Calculated Mx {2} or InputMin ({1}) < calculated My {3} with F1 as {4}, F2 as {5} and F3 as {6} ", InputMax, InputMin, Mx[m], My[m], focallength1[k], focallength2[l], focallength3[m]);
 
+                                    }
+
+                                }
                             }
+
 
                     }
 
@@ -464,33 +484,53 @@ namespace BXwithZemax
 
                         Maxtrack[k] = Math.Round((double)F1[i] + 2 * F2[j] + F3[k] + (F2[j] * (((F3[k] * MxratioMy[k]) / F1[i]) + F1[i] / (F3[k] * MxratioMy[k]))), 4);
 
-                        templist.Add(Maxtrack[k]);
-
-                        if ((Mx[k] > MxratioMy[k]) && (MxratioMy[k] > My[k]) && (InputMax <= Mx[k]) && (InputMin >= My[k]) && (InputMax > InputMin) && (InputMin < InputMax) && (EPD1[k] > EPDConstrain) && (EPD1[k] == EPD2[k]))
+                        if (EPD1[i] >= EPDConstrainF1)
                         {
-                            F1List.Add(F1[i]);
+                            if (EPD3[k] >= EPDConstrainF3 && EPD2[j] != EPD3[k])
+                            {
+                                if ((Mx[k] > MxratioMy[k]) && (MxratioMy[k] > My[k]) && (InputMax <= Mx[k]) && (InputMin >= My[k]) && (InputMax > InputMin) && (InputMin < InputMax))
+                                {
+                                    F1List.Add(F1[i]);
 
-                            F2List.Add(F2[j]);
+                                    F2List.Add(F2[j]);
 
-                            F3List.Add(F3[k]);
+                                    F3List.Add(F3[k]);
+
+                                    EPD1List.Add(EPD1[i]);
+
+                                    EPD2List.Add(EPD2[j]);
+
+                                    EPD3List.Add(EPD3[k]);
 
 
-                            MaxtrackList.Add(Maxtrack[k]);
+                                    MaxtrackList.Add(Maxtrack[k]);
 
-                            MxList.Add(Mx[k]);
+                                    MxList.Add(Mx[k]);
 
-                            MyList.Add(My[k]);
+                                    MyList.Add(My[k]);
 
+                                }
+
+                            }
                         }
+
 
                         else
 
-                            if ((MxratioMy[k] > Mx[k]) || (My[k] > MxratioMy[k]) || (InputMax > Mx[k]) || (InputMin < My[k]) || (InputMax < InputMin) || (EPD1[k] < EPDConstrain) || (EPD1[k] != EPD2[k]))
+                            if (EPD1[i] < EPDConstrainF1)
                             {
+                                if (EPD3[k] < EPDConstrainF3 || EPD2[j] == EPD3[k])
+                                {
+                                    if ((MxratioMy[k] > Mx[k]) || (My[k] > MxratioMy[k]) || (InputMax > Mx[k]) || (InputMin < My[k]) || (InputMax < InputMin))
+                                    {
 
-                                // Do nothing here just ignore the values
+                                        // Do nothing here just ignore the values
 
+                                    }
+
+                                }
                             }
+
                     }
 
                 }
@@ -514,13 +554,15 @@ namespace BXwithZemax
 
                     if (p == MaxtrackList.Count - 1)
                     {
+                        int EPD = MaxtrackList.Count - 1;
+
                         // Get Maximum and Minimum value of Tracklength with respective Focal lengths  
 
                         Console.WriteLine("Maxtrackvalue = {0} with F1 = {1}, F2 = {2} and F3 = {3} \n", MaxtrackList.Max(), F1List[MaxtrackList.IndexOf(MaxtrackList.Max())], F2List[MaxtrackList.IndexOf(MaxtrackList.Max())], F3List[MaxtrackList.IndexOf(MaxtrackList.Max())]);
 
                         Console.WriteLine("The Maxtrackvalue can provide Max Magnifiaction = {0} and Min Magnification = {1} \n", MxList[MaxtrackList.IndexOf(MaxtrackList.Max())], MyList[MaxtrackList.IndexOf(MaxtrackList.Max())]);
 
-                        Console.WriteLine("Mintrackvalue = {0} with F1 = {1}, F2 = {2} and F3 = {3} \n", MaxtrackList.Min(), F1List[MaxtrackList.IndexOf(MaxtrackList.Min())], F2List[MaxtrackList.IndexOf(MaxtrackList.Min())], F3List[MaxtrackList.IndexOf(MaxtrackList.Min())]);
+                        Console.WriteLine("Mintrackvalue = {0} with F1 = {1}, F2 = {2} and F3 = {3} and with EPD1 = {4}, EPD2= {5}, EPD3 = {6} \n", MaxtrackList.Min(), F1List[MaxtrackList.IndexOf(MaxtrackList.Min())], F2List[MaxtrackList.IndexOf(MaxtrackList.Min())], F3List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD1List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD2List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD3List[MaxtrackList.IndexOf(MaxtrackList.Min())]);
 
                         Console.WriteLine("The Mintrackvalue can provide Max Magnifiaction = {0} and Min Magnification = {1} \n", MxList[MaxtrackList.IndexOf(MaxtrackList.Min())], MyList[MaxtrackList.IndexOf(MaxtrackList.Min())]);
                     }
@@ -915,6 +957,13 @@ namespace BXwithZemax
 
             // Get interface of Lens Data Editor and add 3 surfaces.
             //------------------------------------
+
+       //     ISDMaterialCatalogData MaterialCatalogs = TheSystemData.MaterialCatalogs;
+
+           
+
+         //   MaterialCatalogs.AddCatalog(string) = thor;
+
             ILensDataEditor TheLDE = TheSystem.LDE;
             TheLDE.InsertNewSurfaceAt(2);
             TheLDE.InsertNewSurfaceAt(3);
@@ -1097,123 +1146,193 @@ namespace BXwithZemax
 
             //--------------------------------------------
 
-            // Operands for !st Configuration
+            // Operands for 1st Configuration
 
-            IMeritFunctionEditor TheMFE1 = TheSystem.MFE;
+            // CONF 1
 
-            IMFERow Operand_1 = TheMFE1.GetOperandAt(1);
 
-            Operand_1.ChangeType(MeritOperandType.CONF);
+            IMeritFunctionEditor TheMFE = TheSystem.MFE;
 
-            Operand_1.GetCellAt(2).IntegerValue = 1;
+            IMFERow Operand_CONF1 = TheMFE.GetOperandAt(1);
 
-            IMFERow Operand_2 = TheMFE1.InsertNewOperandAt(2);
+            Operand_CONF1.ChangeType(MeritOperandType.CONF);
 
-            Operand_2.ChangeType(MeritOperandType.REAY);
+            Operand_CONF1.GetCellAt(2).IntegerValue = 1;
 
-            Operand_2.GetCellAt(2).IntegerValue = 1;
+            IMFERow Operand_REAY_CONF1_S1 = TheMFE.InsertNewOperandAt(2);
 
-            Operand_2.GetCellAt(3).IntegerValue = 1;
+            Operand_REAY_CONF1_S1.ChangeType(MeritOperandType.REAY);
 
-            Operand_2.GetCellAt(7).DoubleValue = 1;
+            Operand_REAY_CONF1_S1.GetCellAt(2).IntegerValue = 1;
 
-            IMFERow Operand_3 = TheMFE1.InsertNewOperandAt(3);
+            //Operand_REAY_CONF1_S1.GetCellAt(3).IntegerValue = 1;
 
-            Operand_3.ChangeType(MeritOperandType.REAY);
+            Operand_REAY_CONF1_S1.GetCellAt(7).DoubleValue = 1;
 
-            Operand_3.GetCellAt(2).IntegerValue = 5;
+            IMFERow Operand_REAY_CONF1_S5 = TheMFE.InsertNewOperandAt(3);
 
-            Operand_3.GetCellAt(3).IntegerValue = 1;
+            Operand_REAY_CONF1_S5.ChangeType(MeritOperandType.REAY);
 
-            Operand_3.GetCellAt(7).DoubleValue = 1;
+            Operand_REAY_CONF1_S5.GetCellAt(2).IntegerValue = 5;
 
-            IMFERow Operand_4 = TheMFE1.InsertNewOperandAt(4);
+            //Operand_REAY_CONF1_S5.GetCellAt(3).IntegerValue = 1;
 
-            Operand_4.ChangeType(MeritOperandType.DIVI);
+            Operand_REAY_CONF1_S5.GetCellAt(7).DoubleValue = 1;
 
-            Operand_4.GetCellAt(2).IntegerValue = 2;
+            IMFERow Operand_RANG_CONF1_S4 = TheMFE.InsertNewOperandAt(4);
 
-            Operand_4.GetCellAt(3).IntegerValue = 3;
+            Operand_RANG_CONF1_S4.ChangeType(MeritOperandType.RANG);
+
+            Operand_RANG_CONF1_S4.GetCellAt(2).IntegerValue = 4;
+
+            //Operand_RANG_CONF1_S4.GetCellAt(3).IntegerValue = 1;
+
+            Operand_RANG_CONF1_S4.GetCellAt(7).DoubleValue = 1;
+
+
+            //IMFERow Operand_RAID_CONF1_S4 = TheMFE.InsertNewOperandAt(5);
+
+            //Operand_RAID_CONF1_S4.ChangeType(MeritOperandType.RAID);
+
+            //Operand_RAID_CONF1_S4.GetCellAt(2).IntegerValue = 4;
+
+            ////Operand_RAID_CONF1_S4.GetCellAt(3).IntegerValue = 1;
+
+            //Operand_RAID_CONF1_S4.GetCellAt(7).DoubleValue = 1;
+
+            IMFERow Operand_DIVI_CONF1_S1S5 = TheMFE.InsertNewOperandAt(5);
+
+            Operand_DIVI_CONF1_S1S5.ChangeType(MeritOperandType.DIVI);
+
+            Operand_DIVI_CONF1_S1S5.GetCellAt(2).IntegerValue = 2;
+
+            Operand_DIVI_CONF1_S1S5.GetCellAt(3).IntegerValue = 3;
+
+
 
             //-------------------------------------------
 
             //Operand for 2nd Configuration
 
-            IMeritFunctionEditor TheMFE2 = TheSystem.MFE;
+            // CONF 2
 
-            IMFERow Operand_5 = TheMFE2.InsertNewOperandAt(5);
+            IMFERow Operand_CONF2 = TheMFE.InsertNewOperandAt(6);
 
-            Operand_5.ChangeType(MeritOperandType.CONF);
+            Operand_CONF2.ChangeType(MeritOperandType.CONF);
 
-            Operand_5.GetCellAt(2).IntegerValue = 2;
+            Operand_CONF2.GetCellAt(2).IntegerValue = 2;
 
-            IMFERow Operand_6 = TheMFE2.InsertNewOperandAt(6);
+            IMFERow Operand_REAY_CONF2_S1 = TheMFE.InsertNewOperandAt(7);
 
-            Operand_6.ChangeType(MeritOperandType.REAY);
+            Operand_REAY_CONF2_S1.ChangeType(MeritOperandType.REAY);
 
-            Operand_6.GetCellAt(2).IntegerValue = 1;
+            Operand_REAY_CONF2_S1.GetCellAt(2).IntegerValue = 1;
 
-            Operand_6.GetCellAt(3).IntegerValue = 1;
+            //Operand_REAY_CONF2_S1.GetCellAt(3).IntegerValue = 1;
 
-            Operand_6.GetCellAt(7).DoubleValue = 1;
+            Operand_REAY_CONF2_S1.GetCellAt(7).DoubleValue = 1;
 
-            IMFERow Operand_7 = TheMFE2.InsertNewOperandAt(7);
+            IMFERow Operand_REAY_CONF2_S5 = TheMFE.InsertNewOperandAt(8);
 
-            Operand_7.ChangeType(MeritOperandType.REAY);
+            Operand_REAY_CONF2_S5.ChangeType(MeritOperandType.REAY);
 
-            Operand_7.GetCellAt(2).IntegerValue = 5;
+            Operand_REAY_CONF2_S5.GetCellAt(2).IntegerValue = 5;
 
-            Operand_7.GetCellAt(3).IntegerValue = 1;
+            //Operand_REAY_CONF2_S5.GetCellAt(3).IntegerValue = 1;
 
-            Operand_7.GetCellAt(7).DoubleValue = 1;
+            Operand_REAY_CONF2_S5.GetCellAt(7).DoubleValue = 1;
 
-            IMFERow Operand_8 = TheMFE2.InsertNewOperandAt(8);
+            IMFERow Operand_RANG_CONF2_S4 = TheMFE.InsertNewOperandAt(9);
 
-            Operand_8.ChangeType(MeritOperandType.DIVI);
+            Operand_RANG_CONF2_S4.ChangeType(MeritOperandType.RANG);
 
-            Operand_8.GetCellAt(2).IntegerValue = 6;
+            Operand_RANG_CONF2_S4.GetCellAt(2).IntegerValue = 4;
 
-            Operand_8.GetCellAt(3).IntegerValue = 7;
+            //Operand_RANG_CONF2_S4.GetCellAt(3).IntegerValue = 1;
+
+            Operand_RANG_CONF2_S4.GetCellAt(7).DoubleValue = 1;
+
+            // RAID Operand
+
+            //IMFERow Operand_RAID_CONF2_S4 = TheMFE.InsertNewOperandAt(11);
+
+            //Operand_RAID_CONF2_S4.ChangeType(MeritOperandType.RAID);
+
+            //Operand_RAID_CONF2_S4.GetCellAt(2).IntegerValue = 4;
+
+            ////Operand_RAID_CONF2_S4.GetCellAt(3).IntegerValue = 1;
+
+            //Operand_RAID_CONF2_S4.GetCellAt(7).DoubleValue = 1;
+
+            IMFERow Operand_DIVI_CONF2_S1S5 = TheMFE.InsertNewOperandAt(10);
+
+            Operand_DIVI_CONF2_S1S5.ChangeType(MeritOperandType.DIVI);
+
+            Operand_DIVI_CONF2_S1S5.GetCellAt(2).IntegerValue = 7;
+
+            Operand_DIVI_CONF2_S1S5.GetCellAt(3).IntegerValue = 8;
+
 
             //---------------------------------------------------
 
             //Operand for 3rd Configuration
 
-            IMeritFunctionEditor TheMFE3 = TheSystem.MFE;
+            // CONF 3
 
-            IMFERow Operand_9 = TheMFE3.InsertNewOperandAt(9);
+            IMFERow Operand_CONF3 = TheMFE.InsertNewOperandAt(11);
 
-            Operand_9.ChangeType(MeritOperandType.CONF);
+            Operand_CONF3.ChangeType(MeritOperandType.CONF);
 
-            Operand_9.GetCellAt(2).IntegerValue = 3;
+            Operand_CONF3.GetCellAt(2).IntegerValue = 3;
 
-            IMFERow Operand_10 = TheMFE3.InsertNewOperandAt(10);
+            IMFERow Operand_REAY_CONF3_S1 = TheMFE.InsertNewOperandAt(12);
 
-            Operand_10.ChangeType(MeritOperandType.REAY);
+            Operand_REAY_CONF3_S1.ChangeType(MeritOperandType.REAY);
 
-            Operand_10.GetCellAt(2).IntegerValue = 1;
+            Operand_REAY_CONF3_S1.GetCellAt(2).IntegerValue = 1;
 
-            Operand_10.GetCellAt(3).IntegerValue = 1;
+            //Operand_REAY_CONF3_S1.GetCellAt(3).IntegerValue = 1;
 
-            Operand_10.GetCellAt(7).DoubleValue = 1;
+            Operand_REAY_CONF3_S1.GetCellAt(7).DoubleValue = 1;
 
-            IMFERow Operand_11 = TheMFE3.InsertNewOperandAt(11);
+            IMFERow Operand_REAY_CONF3_S5 = TheMFE.InsertNewOperandAt(13);
 
-            Operand_11.ChangeType(MeritOperandType.REAY);
+            Operand_REAY_CONF3_S5.ChangeType(MeritOperandType.REAY);
 
-            Operand_11.GetCellAt(2).IntegerValue = 5;
+            Operand_REAY_CONF3_S5.GetCellAt(2).IntegerValue = 5;
 
-            Operand_11.GetCellAt(3).IntegerValue = 1;
+            //Operand_REAY_CONF3_S5.GetCellAt(3).IntegerValue = 1;
 
-            Operand_11.GetCellAt(7).DoubleValue = 1;
+            Operand_REAY_CONF3_S5.GetCellAt(7).DoubleValue = 1;
 
-            IMFERow Operand_12 = TheMFE3.InsertNewOperandAt(12);
+            IMFERow Operand_RANG_CONF3_S4 = TheMFE.InsertNewOperandAt(14);
 
-            Operand_12.ChangeType(MeritOperandType.DIVI);
+            Operand_RANG_CONF3_S4.ChangeType(MeritOperandType.RANG);
 
-            Operand_12.GetCellAt(2).IntegerValue = 10;
+            Operand_RANG_CONF3_S4.GetCellAt(2).IntegerValue = 4;
 
-            Operand_12.GetCellAt(3).IntegerValue = 11;
+            //Operand_RANG_CONF3_S4.GetCellAt(3).IntegerValue = 1;
+
+            Operand_RANG_CONF3_S4.GetCellAt(7).DoubleValue = 1;
+
+
+            //IMFERow Operand_RAID_CONF3_S4 = TheMFE.InsertNewOperandAt(17);
+
+            //Operand_RAID_CONF3_S4.ChangeType(MeritOperandType.RAID);
+
+            //Operand_RAID_CONF3_S4.GetCellAt(2).IntegerValue = 4;
+
+            ////Operand_RAID_CONF3_S4.GetCellAt(3).IntegerValue = 1;
+
+            //Operand_RAID_CONF3_S4.GetCellAt(7).DoubleValue = 1;
+
+            IMFERow Operand_DIVI_CONF3_S1S5 = TheMFE.InsertNewOperandAt(15);
+
+            Operand_DIVI_CONF3_S1S5.ChangeType(MeritOperandType.DIVI);
+
+            Operand_DIVI_CONF3_S1S5.GetCellAt(2).IntegerValue = 12;
+
+            Operand_DIVI_CONF3_S1S5.GetCellAt(3).IntegerValue = 13;
 
             //--------------------------------------------
 
