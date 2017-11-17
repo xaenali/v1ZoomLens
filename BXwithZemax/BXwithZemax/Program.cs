@@ -13,6 +13,7 @@ using ZOSAPI.Editors.MCE;
 using ZOSAPI.Editors;
 using ZOSAPI.Editors.LDE;
 using ZOSAPI.SystemData;
+using ZOSAPI.Tools.Optimization;
 
 namespace BXwithZemax
 {
@@ -968,6 +969,10 @@ namespace BXwithZemax
             TheLDE.InsertNewSurfaceAt(2);
             TheLDE.InsertNewSurfaceAt(3);
             TheLDE.InsertNewSurfaceAt(4);
+            TheLDE.InsertNewSurfaceAt(5);
+            TheLDE.InsertNewSurfaceAt(6);
+            TheLDE.InsertNewSurfaceAt(7);
+
             //-----------------------------------
 
 
@@ -1029,6 +1034,10 @@ namespace BXwithZemax
             TheLDE.GetSurfaceAt(2).ChangeType(SurfaceType_Paraxial);
             TheLDE.GetSurfaceAt(3).ChangeType(SurfaceType_Paraxial);
             TheLDE.GetSurfaceAt(4).ChangeType(SurfaceType_Paraxial);
+            TheLDE.GetSurfaceAt(5).ChangeType(SurfaceType_Paraxial);
+            TheLDE.GetSurfaceAt(6).ChangeType(SurfaceType_Paraxial);
+            TheLDE.GetSurfaceAt(7).ChangeType(SurfaceType_Paraxial);
+
 
 
             // Set thickness and material for each surface.
@@ -1159,54 +1168,99 @@ namespace BXwithZemax
 
             Operand_CONF1.GetCellAt(2).IntegerValue = 1;
 
-            IMFERow Operand_REAY_CONF1_S1 = TheMFE.InsertNewOperandAt(2);
+            IMFERow Operand_REAYop2_CONF1 = TheMFE.InsertNewOperandAt(2);
 
-            Operand_REAY_CONF1_S1.ChangeType(MeritOperandType.REAY);
+            Operand_REAYop2_CONF1.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAY_CONF1_S1.GetCellAt(2).IntegerValue = 1;
+            Operand_REAYop2_CONF1.GetCellAt(2).IntegerValue = 1;
 
-            //Operand_REAY_CONF1_S1.GetCellAt(3).IntegerValue = 1;
+            Operand_REAYop2_CONF1.GetCellAt(7).DoubleValue = 1;
 
-            Operand_REAY_CONF1_S1.GetCellAt(7).DoubleValue = 1;
+            IMFERow Operand_REAYop3_CONF1 = TheMFE.InsertNewOperandAt(3);
 
-            IMFERow Operand_REAY_CONF1_S5 = TheMFE.InsertNewOperandAt(3);
+            Operand_REAYop3_CONF1.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAY_CONF1_S5.ChangeType(MeritOperandType.REAY);
+            Operand_REAYop3_CONF1.GetCellAt(2).IntegerValue = 5;
 
-            Operand_REAY_CONF1_S5.GetCellAt(2).IntegerValue = 5;
+            Operand_REAYop3_CONF1.GetCellAt(7).DoubleValue = 1;
 
-            //Operand_REAY_CONF1_S5.GetCellAt(3).IntegerValue = 1;
+            IMFERow Operand_RANGop4_CONF1 = TheMFE.InsertNewOperandAt(4);
 
-            Operand_REAY_CONF1_S5.GetCellAt(7).DoubleValue = 1;
+            Operand_RANGop4_CONF1.ChangeType(MeritOperandType.RANG);
 
-            IMFERow Operand_RANG_CONF1_S4 = TheMFE.InsertNewOperandAt(4);
+            Operand_RANGop4_CONF1.GetCellAt(2).IntegerValue = 4;
 
-            Operand_RANG_CONF1_S4.ChangeType(MeritOperandType.RANG);
+            Operand_RANGop4_CONF1.GetCellAt(7).DoubleValue = 1;
 
-            Operand_RANG_CONF1_S4.GetCellAt(2).IntegerValue = 4;
+            Operand_RANGop4_CONF1.Target = 0;
 
-            //Operand_RANG_CONF1_S4.GetCellAt(3).IntegerValue = 1;
+            Operand_RANGop4_CONF1.Weight = 10;
 
-            Operand_RANG_CONF1_S4.GetCellAt(7).DoubleValue = 1;
+            Operand_RANGop4_CONF1.GetCellAt(7).DoubleValue = 1;
 
+            IMFERow Operand_EFLXop5_CONF1 = TheMFE.InsertNewOperandAt(5); // EFLX for operand 5
 
-            //IMFERow Operand_RAID_CONF1_S4 = TheMFE.InsertNewOperandAt(5);
+            Operand_EFLXop5_CONF1.ChangeType(MeritOperandType.EFLX);
 
-            //Operand_RAID_CONF1_S4.ChangeType(MeritOperandType.RAID);
+            Operand_EFLXop5_CONF1.GetCellAt(2).IntegerValue = 2;
 
-            //Operand_RAID_CONF1_S4.GetCellAt(2).IntegerValue = 4;
+            Operand_EFLXop5_CONF1.GetCellAt(3).IntegerValue = 3;
 
-            ////Operand_RAID_CONF1_S4.GetCellAt(3).IntegerValue = 1;
+            Operand_EFLXop5_CONF1.Target = Operand_EFLXop5_CONF1.GetCellAt(12).DoubleValue;
 
-            //Operand_RAID_CONF1_S4.GetCellAt(7).DoubleValue = 1;
+            Operand_EFLXop5_CONF1.Weight = 1;
 
-            IMFERow Operand_DIVI_CONF1_S1S5 = TheMFE.InsertNewOperandAt(5);
+            IMFERow Operand_EFLXop6_CONF1 = TheMFE.InsertNewOperandAt(6);
 
-            Operand_DIVI_CONF1_S1S5.ChangeType(MeritOperandType.DIVI);
+            Operand_EFLXop6_CONF1.ChangeType(MeritOperandType.EFLX);
 
-            Operand_DIVI_CONF1_S1S5.GetCellAt(2).IntegerValue = 2;
+            Operand_EFLXop6_CONF1.GetCellAt(2).IntegerValue = 4;
 
-            Operand_DIVI_CONF1_S1S5.GetCellAt(3).IntegerValue = 3;
+            Operand_EFLXop6_CONF1.GetCellAt(3).IntegerValue = 5;
+
+            Operand_EFLXop6_CONF1.Target = Operand_EFLXop6_CONF1.GetCellAt(12).DoubleValue;
+
+            Operand_EFLXop6_CONF1.Weight = 1;
+
+            IMFERow Operand_EFLXop7_CONF1 = TheMFE.InsertNewOperandAt(7);
+
+            Operand_EFLXop7_CONF1.ChangeType(MeritOperandType.EFLX);
+
+            Operand_EFLXop7_CONF1.GetCellAt(2).IntegerValue = 6;
+
+            Operand_EFLXop7_CONF1.GetCellAt(3).IntegerValue = 7;
+
+            Operand_EFLXop7_CONF1.Target = Operand_EFLXop7_CONF1.GetCellAt(12).DoubleValue;
+
+            Operand_EFLXop7_CONF1.Weight = 1;
+
+            IMFERow Operand_CTGTop8_CONF1 = TheMFE.InsertNewOperandAt(8);
+
+            Operand_CTGTop8_CONF1.ChangeType(MeritOperandType.CTGT);
+
+            Operand_CTGTop8_CONF1.GetCellAt(2).IntegerValue = 3;
+
+            Operand_CTGTop8_CONF1.Target = 0.1;
+
+            Operand_CTGTop8_CONF1.Weight = 1;
+
+            IMFERow Operand_CTGTop9_CONF1 = TheMFE.InsertNewOperandAt(9);
+
+            Operand_CTGTop9_CONF1.ChangeType(MeritOperandType.CTGT);
+
+            Operand_CTGTop9_CONF1.GetCellAt(2).IntegerValue = 3;
+
+            Operand_CTGTop9_CONF1.Target = 0.1;
+
+            Operand_CTGTop9_CONF1.Weight = 1;
+
+            IMFERow Operand_DIVIop23_CONF1 = TheMFE.InsertNewOperandAt(10);
+
+            Operand_DIVIop23_CONF1.ChangeType(MeritOperandType.DIVI);
+
+            Operand_DIVIop23_CONF1.GetCellAt(2).IntegerValue = 2;
+
+            Operand_DIVIop23_CONF1.GetCellAt(3).IntegerValue = 3;
 
 
 
@@ -1216,61 +1270,106 @@ namespace BXwithZemax
 
             // CONF 2
 
-            IMFERow Operand_CONF2 = TheMFE.InsertNewOperandAt(6);
+            IMFERow Operand_CONF2 = TheMFE.InsertNewOperandAt(11);
 
             Operand_CONF2.ChangeType(MeritOperandType.CONF);
 
             Operand_CONF2.GetCellAt(2).IntegerValue = 2;
 
-            IMFERow Operand_REAY_CONF2_S1 = TheMFE.InsertNewOperandAt(7);
+            IMFERow Operand_REAYop12_CONF2 = TheMFE.InsertNewOperandAt(12);
 
-            Operand_REAY_CONF2_S1.ChangeType(MeritOperandType.REAY);
+            Operand_REAYop12_CONF2.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAY_CONF2_S1.GetCellAt(2).IntegerValue = 1;
+            Operand_REAYop12_CONF2.GetCellAt(2).IntegerValue = 1;
 
-            //Operand_REAY_CONF2_S1.GetCellAt(3).IntegerValue = 1;
+            Operand_REAYop12_CONF2.GetCellAt(7).DoubleValue = 1;
 
-            Operand_REAY_CONF2_S1.GetCellAt(7).DoubleValue = 1;
+            IMFERow Operand_REAYop13_CONF2 = TheMFE.InsertNewOperandAt(13);
 
-            IMFERow Operand_REAY_CONF2_S5 = TheMFE.InsertNewOperandAt(8);
+            Operand_REAYop13_CONF2.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAY_CONF2_S5.ChangeType(MeritOperandType.REAY);
+            Operand_REAYop13_CONF2.GetCellAt(2).IntegerValue = 5;
 
-            Operand_REAY_CONF2_S5.GetCellAt(2).IntegerValue = 5;
+            Operand_REAYop13_CONF2.GetCellAt(7).DoubleValue = 1;
 
-            //Operand_REAY_CONF2_S5.GetCellAt(3).IntegerValue = 1;
+            IMFERow Operand_RANGop14_CONF2 = TheMFE.InsertNewOperandAt(14);
 
-            Operand_REAY_CONF2_S5.GetCellAt(7).DoubleValue = 1;
+            Operand_RANGop14_CONF2.ChangeType(MeritOperandType.RANG);
 
-            IMFERow Operand_RANG_CONF2_S4 = TheMFE.InsertNewOperandAt(9);
+            Operand_RANGop14_CONF2.GetCellAt(2).IntegerValue = 4;
 
-            Operand_RANG_CONF2_S4.ChangeType(MeritOperandType.RANG);
+            Operand_RANGop14_CONF2.GetCellAt(7).DoubleValue = 1;
 
-            Operand_RANG_CONF2_S4.GetCellAt(2).IntegerValue = 4;
+            Operand_RANGop14_CONF2.Target = 0;
 
-            //Operand_RANG_CONF2_S4.GetCellAt(3).IntegerValue = 1;
+            Operand_RANGop14_CONF2.Weight = 10;
 
-            Operand_RANG_CONF2_S4.GetCellAt(7).DoubleValue = 1;
+            Operand_RANGop14_CONF2.GetCellAt(7).DoubleValue = 1;
 
-            // RAID Operand
+            IMFERow Operand_EFLXop15_CONF2 = TheMFE.InsertNewOperandAt(15); // EFLX for operand 5
 
-            //IMFERow Operand_RAID_CONF2_S4 = TheMFE.InsertNewOperandAt(11);
+            Operand_EFLXop15_CONF2.ChangeType(MeritOperandType.EFLX);
 
-            //Operand_RAID_CONF2_S4.ChangeType(MeritOperandType.RAID);
+            Operand_EFLXop15_CONF2.GetCellAt(2).IntegerValue = 2;
 
-            //Operand_RAID_CONF2_S4.GetCellAt(2).IntegerValue = 4;
+            Operand_EFLXop15_CONF2.GetCellAt(3).IntegerValue = 3;
 
-            ////Operand_RAID_CONF2_S4.GetCellAt(3).IntegerValue = 1;
+            Operand_EFLXop15_CONF2.Target = Operand_EFLXop15_CONF2.GetCellAt(12).DoubleValue;
 
-            //Operand_RAID_CONF2_S4.GetCellAt(7).DoubleValue = 1;
+            Operand_EFLXop15_CONF2.Weight = 1;
 
-            IMFERow Operand_DIVI_CONF2_S1S5 = TheMFE.InsertNewOperandAt(10);
+            IMFERow Operand_EFLXop16_CONF2 = TheMFE.InsertNewOperandAt(16);
 
-            Operand_DIVI_CONF2_S1S5.ChangeType(MeritOperandType.DIVI);
+            Operand_EFLXop16_CONF2.ChangeType(MeritOperandType.EFLX);
 
-            Operand_DIVI_CONF2_S1S5.GetCellAt(2).IntegerValue = 7;
+            Operand_EFLXop16_CONF2.GetCellAt(2).IntegerValue = 4;
 
-            Operand_DIVI_CONF2_S1S5.GetCellAt(3).IntegerValue = 8;
+            Operand_EFLXop16_CONF2.GetCellAt(3).IntegerValue = 5;
+
+            Operand_EFLXop16_CONF2.Target = Operand_EFLXop16_CONF2.GetCellAt(12).DoubleValue;
+
+            Operand_EFLXop16_CONF2.Weight = 1;
+
+            IMFERow Operand_EFLXop17_CONF2 = TheMFE.InsertNewOperandAt(17);
+
+            Operand_EFLXop17_CONF2.ChangeType(MeritOperandType.EFLX);
+
+            Operand_EFLXop17_CONF2.GetCellAt(2).IntegerValue = 6;
+
+            Operand_EFLXop17_CONF2.GetCellAt(3).IntegerValue = 7;
+
+            Operand_EFLXop17_CONF2.Target = Operand_EFLXop17_CONF2.GetCellAt(12).DoubleValue;
+
+            Operand_EFLXop17_CONF2.Weight = 1;
+
+            IMFERow Operand_CTGTop18_CONF2 = TheMFE.InsertNewOperandAt(18);
+
+            Operand_CTGTop18_CONF2.ChangeType(MeritOperandType.CTGT);
+
+            Operand_CTGTop18_CONF2.GetCellAt(2).IntegerValue = 3;
+
+            Operand_CTGTop18_CONF2.Target = 0.1;
+
+            Operand_CTGTop18_CONF2.Weight = 1;
+
+            IMFERow Operand_CTGTop19_CONF2 = TheMFE.InsertNewOperandAt(19);
+
+            Operand_CTGTop19_CONF2.ChangeType(MeritOperandType.CTGT);
+
+            Operand_CTGTop19_CONF2.GetCellAt(2).IntegerValue = 3;
+
+            Operand_CTGTop19_CONF2.Target = 0.1;
+
+            Operand_CTGTop19_CONF2.Weight = 1;
+
+
+            IMFERow Operand_DIVIop20_CONF2 = TheMFE.InsertNewOperandAt(20);
+
+            Operand_DIVIop20_CONF2.ChangeType(MeritOperandType.DIVI);
+
+            Operand_DIVIop20_CONF2.GetCellAt(2).IntegerValue = 12;
+
+            Operand_DIVIop20_CONF2.GetCellAt(3).IntegerValue = 13;
 
 
             //---------------------------------------------------
@@ -1279,60 +1378,106 @@ namespace BXwithZemax
 
             // CONF 3
 
-            IMFERow Operand_CONF3 = TheMFE.InsertNewOperandAt(11);
+            IMFERow Operand_CONF3 = TheMFE.InsertNewOperandAt(21);
 
             Operand_CONF3.ChangeType(MeritOperandType.CONF);
 
             Operand_CONF3.GetCellAt(2).IntegerValue = 3;
 
-            IMFERow Operand_REAY_CONF3_S1 = TheMFE.InsertNewOperandAt(12);
+            IMFERow Operand_REAYop22_CONF3 = TheMFE.InsertNewOperandAt(22);
 
-            Operand_REAY_CONF3_S1.ChangeType(MeritOperandType.REAY);
+            Operand_REAYop22_CONF3.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAY_CONF3_S1.GetCellAt(2).IntegerValue = 1;
+            Operand_REAYop22_CONF3.GetCellAt(2).IntegerValue = 1;
 
-            //Operand_REAY_CONF3_S1.GetCellAt(3).IntegerValue = 1;
+            Operand_REAYop22_CONF3.GetCellAt(7).DoubleValue = 1;
 
-            Operand_REAY_CONF3_S1.GetCellAt(7).DoubleValue = 1;
+            IMFERow Operand_REAYop33_CONF3 = TheMFE.InsertNewOperandAt(23);
 
-            IMFERow Operand_REAY_CONF3_S5 = TheMFE.InsertNewOperandAt(13);
+            Operand_REAYop33_CONF3.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAY_CONF3_S5.ChangeType(MeritOperandType.REAY);
+            Operand_REAYop33_CONF3.GetCellAt(2).IntegerValue = 5;
 
-            Operand_REAY_CONF3_S5.GetCellAt(2).IntegerValue = 5;
+            Operand_REAYop33_CONF3.GetCellAt(7).DoubleValue = 1;
 
-            //Operand_REAY_CONF3_S5.GetCellAt(3).IntegerValue = 1;
+            IMFERow Operand_RANGop24_CONF3 = TheMFE.InsertNewOperandAt(24);
 
-            Operand_REAY_CONF3_S5.GetCellAt(7).DoubleValue = 1;
+            Operand_RANGop24_CONF3.ChangeType(MeritOperandType.RANG);
 
-            IMFERow Operand_RANG_CONF3_S4 = TheMFE.InsertNewOperandAt(14);
+            Operand_RANGop24_CONF3.GetCellAt(2).IntegerValue = 4;
 
-            Operand_RANG_CONF3_S4.ChangeType(MeritOperandType.RANG);
+            Operand_RANGop24_CONF3.GetCellAt(7).DoubleValue = 1;
 
-            Operand_RANG_CONF3_S4.GetCellAt(2).IntegerValue = 4;
+            Operand_RANGop24_CONF3.Target = 0;
 
-            //Operand_RANG_CONF3_S4.GetCellAt(3).IntegerValue = 1;
+            Operand_RANGop24_CONF3.Weight = 10;
 
-            Operand_RANG_CONF3_S4.GetCellAt(7).DoubleValue = 1;
+            Operand_RANGop24_CONF3.GetCellAt(7).DoubleValue = 1;
+
+            IMFERow Operand_EFLXop25_CONF3 = TheMFE.InsertNewOperandAt(25); // EFLX for operand 5
+
+            Operand_EFLXop25_CONF3.ChangeType(MeritOperandType.EFLX);
+
+            Operand_EFLXop25_CONF3.GetCellAt(2).IntegerValue = 2;
+
+            Operand_EFLXop25_CONF3.GetCellAt(3).IntegerValue = 3;
+
+            Operand_EFLXop25_CONF3.Target = Operand_EFLXop15_CONF2.GetCellAt(12).DoubleValue;
+
+            Operand_EFLXop25_CONF3.Weight = 1;
+
+            IMFERow Operand_EFLXop26_CONF3 = TheMFE.InsertNewOperandAt(26);
+
+            Operand_EFLXop26_CONF3.ChangeType(MeritOperandType.EFLX);
+
+            Operand_EFLXop26_CONF3.GetCellAt(2).IntegerValue = 4;
+
+            Operand_EFLXop26_CONF3.GetCellAt(3).IntegerValue = 5;
+
+            Operand_EFLXop26_CONF3.Target = Operand_EFLXop26_CONF3.GetCellAt(12).DoubleValue;
+
+            Operand_EFLXop26_CONF3.Weight = 1;
+
+            IMFERow Operand_EFLXop27_CONF3 = TheMFE.InsertNewOperandAt(27);
+
+            Operand_EFLXop27_CONF3.ChangeType(MeritOperandType.EFLX);
+
+            Operand_EFLXop27_CONF3.GetCellAt(2).IntegerValue = 6;
+
+            Operand_EFLXop27_CONF3.GetCellAt(3).IntegerValue = 7;
+
+            Operand_EFLXop27_CONF3.Target = Operand_EFLXop27_CONF3.GetCellAt(12).DoubleValue;
+
+            Operand_EFLXop27_CONF3.Weight = 1;
+
+            IMFERow Operand_CTGTop28_CONF3 = TheMFE.InsertNewOperandAt(28);
+
+            Operand_CTGTop28_CONF3.ChangeType(MeritOperandType.CTGT);
+
+            Operand_CTGTop28_CONF3.GetCellAt(2).IntegerValue = 3;
+
+            Operand_CTGTop28_CONF3.Target = 0.1;
+
+            Operand_CTGTop28_CONF3.Weight = 1;
+
+            IMFERow Operand_CTGTop29_CONF3 = TheMFE.InsertNewOperandAt(29);
+
+            Operand_CTGTop29_CONF3.ChangeType(MeritOperandType.CTGT);
+
+            Operand_CTGTop29_CONF3.GetCellAt(2).IntegerValue = 3;
+
+            Operand_CTGTop29_CONF3.Target = 0.1;
+
+            Operand_CTGTop29_CONF3.Weight = 1;
 
 
-            //IMFERow Operand_RAID_CONF3_S4 = TheMFE.InsertNewOperandAt(17);
+            IMFERow Operand_DIVIop30_CONF3 = TheMFE.InsertNewOperandAt(30);
 
-            //Operand_RAID_CONF3_S4.ChangeType(MeritOperandType.RAID);
+            Operand_DIVIop30_CONF3.ChangeType(MeritOperandType.DIVI);
 
-            //Operand_RAID_CONF3_S4.GetCellAt(2).IntegerValue = 4;
+            Operand_DIVIop30_CONF3.GetCellAt(2).IntegerValue = 22;
 
-            ////Operand_RAID_CONF3_S4.GetCellAt(3).IntegerValue = 1;
-
-            //Operand_RAID_CONF3_S4.GetCellAt(7).DoubleValue = 1;
-
-            IMFERow Operand_DIVI_CONF3_S1S5 = TheMFE.InsertNewOperandAt(15);
-
-            Operand_DIVI_CONF3_S1S5.ChangeType(MeritOperandType.DIVI);
-
-            Operand_DIVI_CONF3_S1S5.GetCellAt(2).IntegerValue = 12;
-
-            Operand_DIVI_CONF3_S1S5.GetCellAt(3).IntegerValue = 13;
+            Operand_DIVIop30_CONF3.GetCellAt(3).IntegerValue = 23;
 
             //--------------------------------------------
 
