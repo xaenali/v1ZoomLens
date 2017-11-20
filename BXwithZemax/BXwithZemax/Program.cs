@@ -17,6 +17,18 @@ using ZOSAPI.Tools.Optimization;
 
 namespace BXwithZemax
 {
+    
+    // InputMax = user input value for Max magnification input
+    // InputMin = user input value for Min magnification input
+    // Mx = Max magnification possible
+    // My = Min magnification possible
+
+    //Note: where ever Mx, My and MxratioMy is used with different notation then it is for the same calculation as before 
+
+    //foallength 1,2,3 = imported focallentghs
+    //MxratioMy = ratiobetween focallength1 and focallength3
+    //EPD1,2,3 = Entrance pupil diameter for lens 1, 2 and 3   
+     
     class Program
     {
         public static double InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2, SelF1, SelF2, SelF3;
@@ -847,15 +859,6 @@ namespace BXwithZemax
 
                         }
 
-                    //for (int s = 0; s < 3; s++)
-                    //{
-                    //    Temp1.Add(Mind1);
-
-                    //    Temp2.Add(Mind2);
-
-                    //}
-
-
                 }
 
                 else
@@ -878,7 +881,6 @@ namespace BXwithZemax
 
             }
 
-            // return Mintrackcal(F1, F2, F3, MxratioMy, Maxtrack);
         }
 
         public static void ZemaxInitialize()
@@ -959,7 +961,9 @@ namespace BXwithZemax
             // Get interface of Lens Data Editor and add 3 surfaces.
             //------------------------------------
 
-       //     ISDMaterialCatalogData MaterialCatalogs = TheSystemData.MaterialCatalogs;
+            //ILensCatalogs Cataloglenses = TheSystem.Tools.OpenLensCatalogs();
+
+            //Cataloglenses.RunAndWaitForCompletion();
 
            
 
@@ -1001,17 +1005,6 @@ namespace BXwithZemax
             //-------------------------------
             //! [e19s02_cs]
 
-            //! [e19s03_cs]
-            // GetSurfaceAt(surface number shown in LDE) will return an interface ILDERow
-            // Through property TiltDecenterData of each interface ILDERow, we can modify data in Surface Properties > Tilt/Decenter section
-            //-------------------------------------------------------
-            //TheLDE.GetSurfaceAt(2).TiltDecenterData.BeforeSurfaceOrder = TiltDecenterOrderType.Decenter_Tilt;
-            //TheLDE.GetSurfaceAt(2).TiltDecenterData.BeforeSurfaceTiltX = 15;
-            //TheLDE.GetSurfaceAt(2).TiltDecenterData.AfterSurfaceTiltX = -15;
-            //TheLDE.GetSurfaceAt(3).TiltDecenterData.BeforeSurfaceTiltX = -15;
-            //TheLDE.GetSurfaceAt(3).TiltDecenterData.AfterSurfaceTiltX = 15;
-            //----------------------------------------------------------
-            //! [e19s03_cs]
 
             //! [e19s04_cs]
             // To specify an aperture to a surface, we need to first create an ISurfaceApertureType and then assign it.
@@ -1041,9 +1034,6 @@ namespace BXwithZemax
 
 
             // Set thickness and material for each surface.
-
-            //List<double> TheLDE.GetSurfaceAt(2).Thickness = new List<double>();
-            //List<double> ThicknessAt2 = new List<double>();
 
             List<double> T1 = new List<double>();
             List<double> T2 = new List<double>();
@@ -1089,34 +1079,35 @@ namespace BXwithZemax
             MCOperand2.Param1 = 3;
             //! [e18s04_cs]
 
-            //! [e18s05_cs]
+
+            // Setup Variables
+
+            ISolveData configvariable = TheMCE.GetOperandAt(1).GetOperandCell(1).CreateSolveType(ZOSAPI.Editors.SolveType.Variable);
+
+            
+
+
             // Set values of opeand for each configurations
-
-
-            //MCOperand1.GetOperandCell(3).DoubleValue = T1[g];
-            //MCOperand2.GetOperandCell(3).DoubleValue = T2[g];
-
-            //MCOperand1.GetOperandCell(2).DoubleValue = T1[g];
-            //MCOperand2.GetOperandCell(2).DoubleValue = T2[g];
-
-
-            //! [e18s05_cs]
-
-
-            //}
 
             for (int w = 0; w < Temp1.Count; w++)
             {
                 MCOperand1.GetOperandCell(3).DoubleValue = T1[0];
                 MCOperand2.GetOperandCell(3).DoubleValue = T2[0];
+                TheMCE.GetOperandAt(1).GetOperandCell(3).SetSolveData(configvariable);
+                TheMCE.GetOperandAt(2).GetOperandCell(3).SetSolveData(configvariable);
 
+
+               
                 MCOperand1.GetOperandCell(2).DoubleValue = T1[1];
                 MCOperand2.GetOperandCell(2).DoubleValue = T2[1];
+                TheMCE.GetOperandAt(1).GetOperandCell(2).SetSolveData(configvariable);
+                TheMCE.GetOperandAt(2).GetOperandCell(2).SetSolveData(configvariable);
+
 
                 MCOperand1.GetOperandCell(1).DoubleValue = T1[2];
                 MCOperand2.GetOperandCell(1).DoubleValue = T2[2];
-
-
+                TheMCE.GetOperandAt(1).GetOperandCell(1).SetSolveData(configvariable);
+                TheMCE.GetOperandAt(2).GetOperandCell(1).SetSolveData(configvariable);
 
             }
 
@@ -1479,6 +1470,21 @@ namespace BXwithZemax
 
             Operand_DIVIop30_CONF3.GetCellAt(3).IntegerValue = 23;
 
+
+            // Local optimisation till completion
+
+            //ILocalOptimization LocalOpt = TheSystem.Tools.OpenLocalOptimization();
+
+            //LocalOpt.Algorithm = OptimizationAlgorithm.DampedLeastSquares;
+
+            //LocalOpt.Cycles = OptimizationCycles.Automatic;
+
+            //LocalOpt.NumberOfCores = 12;
+
+            //LocalOpt.RunAndWaitForCompletion();
+
+            //LocalOpt.Close();
+
             //--------------------------------------------
 
             // Open MCE and MFE
@@ -1553,6 +1559,9 @@ namespace BXwithZemax
         static void HandleError(string errorMessage)
         {
             // TODO - add custom error handling
+
+            Console.WriteLine("\nPlease close one of the two running Zemax Applications\n");
+
             throw new Exception(errorMessage);
         }
 
