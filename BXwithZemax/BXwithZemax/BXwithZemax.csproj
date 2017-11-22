@@ -59,6 +59,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="focal2.xlsx" />
+    <None Include="Lens Database.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">

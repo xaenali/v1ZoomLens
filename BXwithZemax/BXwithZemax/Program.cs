@@ -32,8 +32,12 @@ namespace BXwithZemax
     class Program
     {
         public static double InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2, SelF1, SelF2, SelF3;
-        public static List<double> Temp1 = new List<double>();
-        public static List<double> Temp2 = new List<double>();
+        public static string MinVL1, MinVL2, MinVL3;
+        public static List<double> Temp1 = new List<double>(); // List for Distance 1
+        public static List<double> Temp2 = new List<double>(); // List for Distance 2
+        public static List<string> LPTemp1 = new List<string>(); // List for lens part 1
+        public static List<string> LPTemp2 = new List<string>(); // List for lens part 2
+        public static List<string> LPTemp3 = new List<string>(); // List for lens part 3
         public static IList<double> MaxtrackList = new List<double>();
         public static IList<double> F1List = new List<double>();
         public static IList<double> F2List = new List<double>();
@@ -49,15 +53,28 @@ namespace BXwithZemax
         public static double[] MxratioMy = new double[1000000];
         public static IList<double> templist = new List<double>();
         public static double[] Maxtrack = new double[1000000];
-        public static List<double> focallength1 = new List<double>(); // Initialize array for focal length 1
-        public static List<double> focallength2 = new List<double>(); // Initialize array for focal length 2
-        public static List<double> focallength3 = new List<double>(); // Initialize array for focal length 3
-        public static List<double> EPD1 = new List<double>(); // Initialize List for Entrance pupil Dia 1
-        public static List<double> EPD2 = new List<double>(); // Initialize List for Entrance pupil Dia  2
-        public static List<double> EPD3 = new List<double>(); // Initialize List for fEntrance pupil Dia  3
+        public static List<double> focallength1 = new List<double>(); // Initialize array for focal length 1------ used with excel
+        public static List<double> focallength2 = new List<double>(); // Initialize array for focal length 2------ used with excel
+        public static List<double> focallength3 = new List<double>(); // Initialize array for focal length 3------ used with excel
+        public static List<double> EPD1 = new List<double>(); // Initialize List for Entrance pupil Dia 1 ------ used with excel
+        public static List<double> EPD2 = new List<double>(); // Initialize List for Entrance pupil Dia  2------ used with excel
+        public static List<double> EPD3 = new List<double>(); // Initialize List for fEntrance pupil Dia  3------ used with excel
         public static List<double> EPD1List = new List<double>(); // Initialize List for Entrance pupil Dia 1
         public static List<double> EPD2List = new List<double>(); // Initialize List for Entrance pupil Dia  2
         public static List<double> EPD3List = new List<double>(); // Initialize List for fEntrance pupil Dia  3
+        public static List<string> LensPartList1 = new List<string>(); // Initialize Lens part number for focallength 1------ used with excel
+        public static List<string> LensPartList2 = new List<string>(); // Initialize Lens part number for focallength 2------ used with excel
+        public static List<string> LensPartList3 = new List<string>(); // Initialize Lens part number for focallength 3------ used with excel
+        public static List<string> LensList1 = new List<string>(); // Initialize Lens part number for focallength 1
+        public static List<string> LensList2 = new List<string>(); // Initialize Lens part number for focallength 2
+        public static List<string> LensList3 = new List<string>(); // Initialize Lens part number for focallength 3
+        public static List<string> VL1 = new List<string>(); // Initialize vender for focallength 1------ used with excel
+        public static List<string> VL2 = new List<string>(); // Initialize vendor for focallength 2------ used with excel
+        public static List<string> VL3 = new List<string>(); // Initialize vendor for focallength 3------ used with excel
+        public static List<string> vendorList1 = new List<string>(); // Initialize vendor for focallength 1
+        public static List<string> vendorList2 = new List<string>(); // Initialize vendor for focallength 2
+        public static List<string> vendorList3 = new List<string>(); // Initialize vendor for focallength 3
+
 
 
         static void Main(string[] args)
@@ -154,29 +171,50 @@ namespace BXwithZemax
             double EPD1rngCount;
             double EPD2rngCount;
             double EPD3rngCount;
+            double LP1rngCount;
+            double LP2rngCount;
+            double LP3rngCount;
+            double VL1rngCount;
+            double VL2rngCount;
+            double VL3rngCount;
 
+            
+            
             //Create COM Objects. Create a COM object for everything that is referenced
             Excel.Application xlApp = new Excel.Application();
 
-            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Ali\Source\Repos\v1ZoomLens\BXwithZemax\BXwithZemax\focal2.xlsx");
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Ali\Source\Repos\v1ZoomLens\BXwithZemax\BXwithZemax\Lens Database.xlsx");
 
             Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
 
             Excel.Range xlRange = xlWorksheet.UsedRange;
 
-            // get used range of column Focal length columns
+            // get used range of Focal length, Entrance pupil Dia and Lens Part number columns
 
-            Excel.Range F1range = xlWorksheet.UsedRange.Columns["A", Type.Missing];
+            Excel.Range F1range = xlWorksheet.UsedRange.Columns["D", Type.Missing];
 
-            Excel.Range F2range = xlWorksheet.UsedRange.Columns["C", Type.Missing];
+            Excel.Range F2range = xlWorksheet.UsedRange.Columns["Q", Type.Missing];
 
-            Excel.Range F3range = xlWorksheet.UsedRange.Columns["E", Type.Missing];
+            Excel.Range F3range = xlWorksheet.UsedRange.Columns["AD", Type.Missing];
 
-            Excel.Range EPD1range = xlWorksheet.UsedRange.Columns["B", Type.Missing];
+            Excel.Range EPD1range = xlWorksheet.UsedRange.Columns["E", Type.Missing];
 
-            Excel.Range EPD2range = xlWorksheet.UsedRange.Columns["D", Type.Missing];
+            Excel.Range EPD2range = xlWorksheet.UsedRange.Columns["R", Type.Missing];
 
-            Excel.Range EPD3range = xlWorksheet.UsedRange.Columns["F", Type.Missing];
+            Excel.Range EPD3range = xlWorksheet.UsedRange.Columns["AE", Type.Missing];
+
+            Excel.Range LP1range = xlWorksheet.UsedRange.Columns["C", Type.Missing];
+
+            Excel.Range LP2range = xlWorksheet.UsedRange.Columns["P", Type.Missing];
+
+            Excel.Range LP3range = xlWorksheet.UsedRange.Columns["AC", Type.Missing];
+
+            Excel.Range VL1range = xlWorksheet.UsedRange.Columns["B", Type.Missing];
+
+            Excel.Range VL2range = xlWorksheet.UsedRange.Columns["O", Type.Missing];
+
+            Excel.Range VL3range = xlWorksheet.UsedRange.Columns["AB", Type.Missing];
+
 
 
 
@@ -194,40 +232,88 @@ namespace BXwithZemax
 
             EPD3rngCount = EPD3range.Rows.Count;
 
+            LP1rngCount = LP1range.Rows.Count;
 
-            // iterate over column A, C and E's used row count and store values to the list for Focal lengths
+            LP2rngCount = LP2range.Rows.Count;
 
-            for (int i = 2; i <= F1rngCount; i++)
+            LP3rngCount = LP3range.Rows.Count;
+
+            VL1rngCount = LP1range.Rows.Count;
+
+            VL2rngCount = LP2range.Rows.Count;
+
+            VL3rngCount = LP3range.Rows.Count;
+
+
+
+
+            // iterate over column D, Q and AD's used row count and store values to the list for Focal lengths
+
+            for (int i = 3; i <= F1rngCount; i++)
             {
-                focallength1.Add(xlWorksheet.Cells[i, "A"].Value());
+                focallength1.Add(xlWorksheet.Cells[i, "D"].Value());
             }
 
-            for (int j = 2; j <= F2rngCount; j++)
+            for (int j = 3; j <= F2rngCount; j++)
             {
-                focallength2.Add(xlWorksheet.Cells[j, "C"].Value());
+                focallength2.Add(xlWorksheet.Cells[j, "Q"].Value());
             }
 
-            for (int k = 2; k <= F3rngCount; k++)
+            for (int k = 3; k <= F3rngCount; k++)
             {
-                focallength3.Add(xlWorksheet.Cells[k, "E"].Value());
+                focallength3.Add(xlWorksheet.Cells[k, "AD"].Value());
             }
 
-            // iterate over column B, D and F's used row count and store values to the list for Entracne puplil Dia
+            // iterate over column E, R and AE's used row count and store values to the list for Entracne puplil Dia
 
 
-            for (int i = 2; i <= EPD1rngCount; i++)
+            for (int i = 3; i <= EPD1rngCount; i++)
             {
-                EPD1.Add(xlWorksheet.Cells[i, "B"].Value());
+                EPD1.Add(xlWorksheet.Cells[i, "E"].Value());
             }
 
-            for (int j = 2; j <= EPD2rngCount; j++)
+            for (int j = 3; j <= EPD2rngCount; j++)
             {
-                EPD2.Add(xlWorksheet.Cells[j, "D"].Value());
+                EPD2.Add(xlWorksheet.Cells[j, "R"].Value());
             }
 
-            for (int k = 2; k <= EPD3rngCount; k++)
+            for (int k = 3; k <= EPD3rngCount; k++)
             {
-                EPD3.Add(xlWorksheet.Cells[k, "F"].Value());
+                EPD3.Add(xlWorksheet.Cells[k, "AE"].Value());
+            }
+
+            // iterate over column C, P and AC's used row count and store values to the list for lens part number
+
+            for (int i = 3; i <= LP1rngCount; i++)
+            {
+                LensPartList1.Add(xlWorksheet.Cells[i, "C"].Value());
+            }
+
+            for (int j = 3; j <= LP2rngCount; j++)
+            {
+                LensPartList2.Add(xlWorksheet.Cells[j, "P"].Value());
+            }
+
+            for (int k = 3; k <= LP3rngCount; k++)
+            {
+                LensPartList3.Add(xlWorksheet.Cells[k, "AC"].Value());
+            }
+
+            // iterate over column B, O and AB's used row count and store values to the list for vendor
+
+            for (int i = 3; i <= VL1rngCount; i++)
+            {
+                VL1.Add(xlWorksheet.Cells[i, "E"].Value());
+            }
+
+            for (int j = 3; j <= VL2rngCount; j++)
+            {
+                VL2.Add(xlWorksheet.Cells[j, "R"].Value());
+            }
+
+            for (int k = 3; k <= VL3rngCount; k++)
+            {
+                VL3.Add(xlWorksheet.Cells[k, "AE"].Value());
             }
 
 
@@ -515,7 +601,18 @@ namespace BXwithZemax
 
                                     EPD3List.Add(EPD3[k]);
 
+                                    LensList1.Add(LensPartList1[i]);
 
+                                    LensList2.Add(LensPartList2[j]);
+
+                                    LensList3.Add(LensPartList3[k]);
+
+                                    vendorList1.Add(VL1[i]);
+
+                                    vendorList2.Add(VL2[j]);
+
+                                    vendorList3.Add(VL3[k]);
+                                    
                                     MaxtrackList.Add(Maxtrack[k]);
 
                                     MxList.Add(Mx[k]);
@@ -576,6 +673,8 @@ namespace BXwithZemax
                         Console.WriteLine("The Maxtrackvalue can provide Max Magnifiaction = {0} and Min Magnification = {1} \n", MxList[MaxtrackList.IndexOf(MaxtrackList.Max())], MyList[MaxtrackList.IndexOf(MaxtrackList.Max())]);
 
                         Console.WriteLine("Mintrackvalue = {0} with F1 = {1}, F2 = {2} and F3 = {3} and with EPD1 = {4}, EPD2= {5}, EPD3 = {6} \n", MaxtrackList.Min(), F1List[MaxtrackList.IndexOf(MaxtrackList.Min())], F2List[MaxtrackList.IndexOf(MaxtrackList.Min())], F3List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD1List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD2List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD3List[MaxtrackList.IndexOf(MaxtrackList.Min())]);
+
+                        Console.WriteLine("The Lens Part for F1 = {0}, F2 = {1} and F3 = {2} \n", LensList1[MaxtrackList.IndexOf(MaxtrackList.Min())], LensList2[MaxtrackList.IndexOf(MaxtrackList.Min())], LensList3[MaxtrackList.IndexOf(MaxtrackList.Min())]);
 
                         Console.WriteLine("The Mintrackvalue can provide Max Magnifiaction = {0} and Min Magnification = {1} \n", MxList[MaxtrackList.IndexOf(MaxtrackList.Min())], MyList[MaxtrackList.IndexOf(MaxtrackList.Min())]);
                     }
@@ -757,6 +856,8 @@ namespace BXwithZemax
         {
             double MinInput, MinF1, MinF2, MinF3, Mina1, Mina2, Minb1, Minb2, MinMx, MinMy, MinMxratioMy;
 
+            string MinLP1, MinLP2, MinLP3;
+
             int a = 1;
 
             if (a == 1)
@@ -775,6 +876,18 @@ namespace BXwithZemax
             MinF2 = F2List[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
             MinF3 = F3List[MaxtrackList.IndexOf(MaxtrackList.Min())];
+
+            MinLP1 = LensList1[MaxtrackList.IndexOf(MaxtrackList.Min())];
+
+            MinLP2 = LensList2[MaxtrackList.IndexOf(MaxtrackList.Min())];
+
+            MinLP3 = LensList3[MaxtrackList.IndexOf(MaxtrackList.Min())];
+
+            MinVL1 = vendorList1[MaxtrackList.IndexOf(MaxtrackList.Min())];
+
+            MinVL2 = vendorList2[MaxtrackList.IndexOf(MaxtrackList.Min())];
+
+            MinVL3 = vendorList3[MaxtrackList.IndexOf(MaxtrackList.Min())]; 
 
             SelF1 = MinF1;
 
@@ -842,6 +955,12 @@ namespace BXwithZemax
                         Temp1.Add(Mind1);
 
                         Temp2.Add(Mind2);
+
+                        LPTemp1.Add(MinLP1);
+
+                        LPTemp2.Add(MinLP2);
+
+                        LPTemp3.Add(MinLP3);
 
                     }
 
@@ -942,9 +1061,9 @@ namespace BXwithZemax
 
             // Open MCE and MFE
 
-            TheSystem.MCE.ShowMCE();
+            //TheSystem.MCE.ShowMCE();
 
-            TheSystem.MFE.ShowMFE();
+            //TheSystem.MFE.ShowMFE();
 
 
 
@@ -955,81 +1074,114 @@ namespace BXwithZemax
             TheSystemData.Aperture.ApertureValue = InputbeamDia;
             TheSystemData.Aperture.SemiDiameterMargin = 2;
             TheSystemData.Aperture.AFocalImageSpace = true;
-            TheSystemData.Wavelengths.GetWavelength(1).Wavelength = 0.55;
+            TheSystemData.Wavelengths.GetWavelength(1).Wavelength = 1.06;
             //! [e19s01_cs]
 
             // Get interface of Lens Data Editor and add 3 surfaces.
             //------------------------------------
 
-            //ILensCatalogs Cataloglenses = TheSystem.Tools.OpenLensCatalogs();
+            ISDMaterialCatalogData sysCat = TheSystem.SystemData.MaterialCatalogs;
 
-            //Cataloglenses.RunAndWaitForCompletion();
+            sysCat.AddCatalog("Schott");
+            sysCat.AddCatalog("Angstromlink");
+            sysCat.AddCatalog("Apel");
+            sysCat.AddCatalog("Archer");
+            sysCat.AddCatalog("Arton");
+            sysCat.AddCatalog("Birefringent");
+            sysCat.AddCatalog("Cdgm");
+            sysCat.AddCatalog("Corning");
+            sysCat.AddCatalog("Heraeus");
+            sysCat.AddCatalog("Hikari");
+            sysCat.AddCatalog("Hoya");
+            sysCat.AddCatalog("Infrared");
+            sysCat.AddCatalog("Irphotonics");
+            sysCat.AddCatalog("Isuzu");
+            sysCat.AddCatalog("Lightpath");
+            sysCat.AddCatalog("Luxexcel");
+            sysCat.AddCatalog("Lzos");
+            sysCat.AddCatalog("Misc");
+            sysCat.AddCatalog("Nhg");
+            sysCat.AddCatalog("Schott_irg");
 
-           
+
+
+            ILensCatalogs Cataloglenses = TheSystem.Tools.OpenLensCatalogs();
+
+            Cataloglenses.GetAllVendors();
+
+            string VendorName = "THORLABS";
+
+            int elementNumber = 1;
+
+            Cataloglenses.SelectedVendor = VendorName;
+
+            Cataloglenses.NumberOfElements = elementNumber;
+
+            // Default Check box setting
+
+            Cataloglenses.IncShapeEqui = true;
+
+            Cataloglenses.IncShapeBi = true;
+
+            Cataloglenses.IncShapePlano = true;
+
+            Cataloglenses.IncShapeMeniscus = true;
+
+            Cataloglenses.IncTypeSpherical = true;
+
+            Cataloglenses.IncTypeGRIN = false;
+
+            Cataloglenses.IncTypeAspheric = false;
+
+            Cataloglenses.IncTypeToroidal = false;
+
+            Cataloglenses.UseEPD = true;
+
+            Cataloglenses.UseEFL = true;
+
+            Cataloglenses.MinEPD = 5.0;
+
+            Cataloglenses.MaxEPD = 50;
+
+            Cataloglenses.MinEFL = 40.0;
+
+            Cataloglenses.MaxEFL = 62.0;
+
+            Cataloglenses.Run();
+
+            int matchlens = Cataloglenses.MatchingLenses;
+
+            Console.WriteLine(matchlens);
+
+
+
+
+
+
+
 
          //   MaterialCatalogs.AddCatalog(string) = thor;
 
             ILensDataEditor TheLDE = TheSystem.LDE;
-            TheLDE.InsertNewSurfaceAt(2);
-            TheLDE.InsertNewSurfaceAt(3);
-            TheLDE.InsertNewSurfaceAt(4);
-            TheLDE.InsertNewSurfaceAt(5);
-            TheLDE.InsertNewSurfaceAt(6);
-            TheLDE.InsertNewSurfaceAt(7);
+            //TheLDE.InsertNewSurfaceAt(2);
+            //TheLDE.InsertNewSurfaceAt(3);
+            //TheLDE.InsertNewSurfaceAt(4);
+            //TheLDE.InsertNewSurfaceAt(5);
+            //TheLDE.InsertNewSurfaceAt(6);
+            //TheLDE.InsertNewSurfaceAt(7);
 
             //-----------------------------------
 
-
-
-            //! [e18s06_cs]
-            // Refocus for each configuration
-            //------------------------------------
-            //IQuickFocus quickfocus = TheSystem.Tools.OpenQuickFocus();
-            //TheMCE.SetCurrentConfiguration(1);
-            //quickfocus.RunAndWaitForCompletion();
-            //TheMCE.SetCurrentConfiguration(2);
-            //quickfocus.RunAndWaitForCompletion();
-            //TheMCE.SetCurrentConfiguration(3);
-            //quickfocus.RunAndWaitForCompletion();
-            //------------------------------------
-            //! [e18s06_cs]
-
-
-
-
-
-
-            //-------------------------------
-            //TheLDE.GetSurfaceAt(4).Thickness = 30;
-            //TheLDE.GetSurfaceAt(2).Material = "N-BK7";
-            //-------------------------------
-            //! [e19s02_cs]
-
-
-            //! [e19s04_cs]
-            // To specify an aperture to a surface, we need to first create an ISurfaceApertureType and then assign it.
-            //-------------------------------------
-            //ISurfaceApertureType Rect_Aper = TheLDE.GetSurfaceAt(2).ApertureData.CreateApertureTypeSettings(SurfaceApertureTypes.RectangularAperture);
-            //Rect_Aper._S_RectangularAperture.XHalfWidth = 10;
-            //Rect_Aper._S_RectangularAperture.YHalfWidth = 10;
-            //TheLDE.GetSurfaceAt(2).ApertureData.ChangeApertureTypeSettings(Rect_Aper);
-            //TheLDE.GetSurfaceAt(3).ApertureData.PickupFrom = 2;
-            //-----------------------------------------
-            //! [e19s04_cs]
-
-            //! [e19s05_cs]
             // To change surface type, we need to first get an ISurfaceTypesettings and then assign it.
             //----------------------------
-            //ISurfaceTypeSettings SurfaceType_CB = TheLDE.GetSurfaceAt(4).GetSurfaceTypeSettings(SurfaceType.CoordinateBreak);
-            //TheLDE.GetSurfaceAt(4).ChangeType(SurfaceType_CB);
 
-            ISurfaceTypeSettings SurfaceType_Paraxial = TheLDE.GetSurfaceAt(2).GetSurfaceTypeSettings(SurfaceType.Paraxial);
-            TheLDE.GetSurfaceAt(2).ChangeType(SurfaceType_Paraxial);
-            TheLDE.GetSurfaceAt(3).ChangeType(SurfaceType_Paraxial);
-            TheLDE.GetSurfaceAt(4).ChangeType(SurfaceType_Paraxial);
-            TheLDE.GetSurfaceAt(5).ChangeType(SurfaceType_Paraxial);
-            TheLDE.GetSurfaceAt(6).ChangeType(SurfaceType_Paraxial);
-            TheLDE.GetSurfaceAt(7).ChangeType(SurfaceType_Paraxial);
+            //ISurfaceTypeSettings SurfaceType_Paraxial = TheLDE.GetSurfaceAt(2).GetSurfaceTypeSettings(SurfaceType.Paraxial);
+            //TheLDE.GetSurfaceAt(2).ChangeType(SurfaceType_Paraxial);
+            //TheLDE.GetSurfaceAt(3).ChangeType(SurfaceType_Paraxial);
+            //TheLDE.GetSurfaceAt(4).ChangeType(SurfaceType_Paraxial);
+            //TheLDE.GetSurfaceAt(5).ChangeType(SurfaceType_Paraxial);
+            //TheLDE.GetSurfaceAt(6).ChangeType(SurfaceType_Paraxial);
+            //TheLDE.GetSurfaceAt(7).ChangeType(SurfaceType_Paraxial);
 
 
 
@@ -1038,15 +1190,15 @@ namespace BXwithZemax
             List<double> T1 = new List<double>();
             List<double> T2 = new List<double>();
 
-            TheLDE.GetSurfaceAt(1).Thickness = 10;
+            TheLDE.GetSurfaceAt(1).Thickness = 20;
 
-            TheLDE.GetSurfaceAt(4).Thickness = 10;
+            TheLDE.GetSurfaceAt(7).Thickness = 20;
 
 
-            T1.Add(TheLDE.GetSurfaceAt(2).Thickness);
+            T1.Add(TheLDE.GetSurfaceAt(3).Thickness);
             T1 = Temp1;
 
-            T2.Add(TheLDE.GetSurfaceAt(3).Thickness);
+            T2.Add(TheLDE.GetSurfaceAt(5).Thickness);
             T2 = Temp2;
 
             // Get interface of the Multi-Configuration Editor
@@ -1111,35 +1263,6 @@ namespace BXwithZemax
 
             }
 
-            TheLDE.GetSurfaceAt(4).Thickness = 10;
-
-
-            //! [e19s02_cs]
-
-            //-----------------------------------
-            //! [e19s05_cs]
-
-            //! [e19s06_cs]
-            // Set Chief Ray solves to surface 4, which is Coordinate Break
-            // To set a solve to a cell in editor, we need to first create a ISolveData and then assign it.
-            //--------------------------------------------
-            //ISolveData Solve_ChiefNormal = TheLDE.GetSurfaceAt(4).GetSurfaceCell(SurfaceColumn.Par1).CreateSolveType(SolveType.PickupChiefRay);
-            //TheLDE.GetSurfaceAt(4).GetSurfaceCell(SurfaceColumn.Par1).SetSolveData(Solve_ChiefNormal);
-            //TheLDE.GetSurfaceAt(4).GetSurfaceCell(SurfaceColumn.Par2).SetSolveData(Solve_ChiefNormal);
-            //TheLDE.GetSurfaceAt(4).GetSurfaceCell(SurfaceColumn.Par3).SetSolveData(Solve_ChiefNormal);
-            //TheLDE.GetSurfaceAt(4).GetSurfaceCell(SurfaceColumn.Par4).SetSolveData(Solve_ChiefNormal);
-            //TheLDE.GetSurfaceAt(4).GetSurfaceCell(SurfaceColumn.Par5).SetSolveData(Solve_ChiefNormal);
-            //-----------------------------------------------------
-            //! [e19s06_cs]
-
-            //! [e19s07_cs]
-            // Copy 3 surfaces starting from surface number 2 in LDE and paste to surface number 5, 
-            // which will become surface number 8 after pasting.
-            //-------------------------------
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    TheLDE.CopySurfaces(2, 3, 5);
-            //}
             //-------------------------------
 
             //Merit Funtions
@@ -1497,17 +1620,17 @@ namespace BXwithZemax
 
             //setup choosen focal lengths (F1, F2 and F3)
 
-            ILDERow Surface2 = TheLDE.GetSurfaceAt(2);
+            //ILDERow Surface2 = TheLDE.GetSurfaceAt(2);
 
-            Surface2.GetCellAt(12).DoubleValue = SelF1;
+            //Surface2.GetCellAt(12).DoubleValue = SelF1;
 
-            ILDERow Surface3 = TheLDE.GetSurfaceAt(3);
+            //ILDERow Surface3 = TheLDE.GetSurfaceAt(3);
 
-            Surface3.GetCellAt(12).DoubleValue = SelF2;
+            //Surface3.GetCellAt(12).DoubleValue = SelF2;
 
-            ILDERow Surface4 = TheLDE.GetSurfaceAt(4);
+            //ILDERow Surface4 = TheLDE.GetSurfaceAt(4);
 
-            Surface4.GetCellAt(12).DoubleValue = SelF3;
+            //Surface4.GetCellAt(12).DoubleValue = SelF3;
 
             // Save file
             TheSystem.SaveAs(TheApplication.SamplesDir + "\\API\\CS#\\BX.ZMX");
