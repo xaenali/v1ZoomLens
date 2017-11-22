@@ -32,7 +32,7 @@ namespace BXwithZemax
     class Program
     {
         public static double InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2, SelF1, SelF2, SelF3;
-        public static string MinVL1, MinVL2, MinVL3;
+        public static string MinVL1, MinVL2, MinVL3, MaxVL1, MaxVL2, MaxVL3, MinLP1, MinLP2, MinLP3, MaxLP1, MaxLP2, MaxLP3;
         public static List<double> Temp1 = new List<double>(); // List for Distance 1
         public static List<double> Temp2 = new List<double>(); // List for Distance 2
         public static List<string> LPTemp1 = new List<string>(); // List for lens part 1
@@ -238,11 +238,11 @@ namespace BXwithZemax
 
             LP3rngCount = LP3range.Rows.Count;
 
-            VL1rngCount = LP1range.Rows.Count;
+            VL1rngCount = VL1range.Rows.Count;
 
-            VL2rngCount = LP2range.Rows.Count;
+            VL2rngCount = VL2range.Rows.Count;
 
-            VL3rngCount = LP3range.Rows.Count;
+            VL3rngCount = VL3range.Rows.Count;
 
 
 
@@ -303,17 +303,17 @@ namespace BXwithZemax
 
             for (int i = 3; i <= VL1rngCount; i++)
             {
-                VL1.Add(xlWorksheet.Cells[i, "E"].Value());
+                VL1.Add(xlWorksheet.Cells[i, "B"].Value());
             }
 
             for (int j = 3; j <= VL2rngCount; j++)
             {
-                VL2.Add(xlWorksheet.Cells[j, "R"].Value());
+                VL2.Add(xlWorksheet.Cells[j, "O"].Value());
             }
 
             for (int k = 3; k <= VL3rngCount; k++)
             {
-                VL3.Add(xlWorksheet.Cells[k, "AE"].Value());
+                VL3.Add(xlWorksheet.Cells[k, "AB"].Value());
             }
 
 
@@ -674,7 +674,7 @@ namespace BXwithZemax
 
                         Console.WriteLine("Mintrackvalue = {0} with F1 = {1}, F2 = {2} and F3 = {3} and with EPD1 = {4}, EPD2= {5}, EPD3 = {6} \n", MaxtrackList.Min(), F1List[MaxtrackList.IndexOf(MaxtrackList.Min())], F2List[MaxtrackList.IndexOf(MaxtrackList.Min())], F3List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD1List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD2List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD3List[MaxtrackList.IndexOf(MaxtrackList.Min())]);
 
-                        Console.WriteLine("The Lens Part for F1 = {0}, F2 = {1} and F3 = {2} \n", LensList1[MaxtrackList.IndexOf(MaxtrackList.Min())], LensList2[MaxtrackList.IndexOf(MaxtrackList.Min())], LensList3[MaxtrackList.IndexOf(MaxtrackList.Min())]);
+                        Console.WriteLine("The Lens Part for F1 = {0}, F2 = {1} and F3 = {2} \n", vendorList1[MaxtrackList.IndexOf(MaxtrackList.Min())], vendorList2[MaxtrackList.IndexOf(MaxtrackList.Min())], vendorList3[MaxtrackList.IndexOf(MaxtrackList.Min())]);
 
                         Console.WriteLine("The Mintrackvalue can provide Max Magnifiaction = {0} and Min Magnification = {1} \n", MxList[MaxtrackList.IndexOf(MaxtrackList.Min())], MyList[MaxtrackList.IndexOf(MaxtrackList.Min())]);
                     }
@@ -730,7 +730,6 @@ namespace BXwithZemax
         {
             double Maxd1, Maxd2, MaxInput, MaxF1, MaxF2, MaxF3, Maxa1, Maxa2, Maxb1, Maxb2, MaxMx, MaxMy, MaxMxratioMy;
 
-
             int a = 1;
 
             if (a == 1)
@@ -747,6 +746,19 @@ namespace BXwithZemax
             MaxF2 = F2List[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
             MaxF3 = F3List[MaxtrackList.IndexOf(MaxtrackList.Max())];
+
+            MaxLP1 = LensList1[MaxtrackList.IndexOf(MaxtrackList.Max())];
+
+            MaxLP2 = LensList2[MaxtrackList.IndexOf(MaxtrackList.Max())];
+
+            MaxLP3 = LensList3[MaxtrackList.IndexOf(MaxtrackList.Max())];
+
+            MaxVL1 = vendorList1[MaxtrackList.IndexOf(MaxtrackList.Max())];
+
+            MaxVL2 = vendorList2[MaxtrackList.IndexOf(MaxtrackList.Max())];
+
+            MaxVL3 = vendorList3[MaxtrackList.IndexOf(MaxtrackList.Max())];
+
 
             SelF1 = MaxF1;
 
@@ -819,6 +831,13 @@ namespace BXwithZemax
 
                         Temp2.Add(Maxd2);
 
+                        LPTemp1.Add(MaxLP1);
+
+                        LPTemp2.Add(MaxLP2);
+
+                        LPTemp3.Add(MaxLP3);
+
+
 
                     }
 
@@ -855,8 +874,6 @@ namespace BXwithZemax
         public static double Mintrackcal(List<double> F1, List<double> F2, List<double> F3, List<double> EP1, List<double> EP2, List<double> EP3)
         {
             double MinInput, MinF1, MinF2, MinF3, Mina1, Mina2, Minb1, Minb2, MinMx, MinMy, MinMxratioMy;
-
-            string MinLP1, MinLP2, MinLP3;
 
             int a = 1;
 
@@ -1104,61 +1121,245 @@ namespace BXwithZemax
             sysCat.AddCatalog("Schott_irg");
 
 
+            List<string> lenslist1 = new List<string>();
+            List<string> lenslist2 = new List<string>();
+            List<string> lenslist3 = new List<string>();
+
+
 
             ILensCatalogs Cataloglenses = TheSystem.Tools.OpenLensCatalogs();
 
             Cataloglenses.GetAllVendors();
 
-            string VendorName = "THORLABS";
+            // Check for Vendor for focallength 1
 
-            int elementNumber = 1;
-
-            Cataloglenses.SelectedVendor = VendorName;
-
-            Cataloglenses.NumberOfElements = elementNumber;
-
-            // Default Check box setting
-
-            Cataloglenses.IncShapeEqui = true;
-
-            Cataloglenses.IncShapeBi = true;
-
-            Cataloglenses.IncShapePlano = true;
-
-            Cataloglenses.IncShapeMeniscus = true;
-
-            Cataloglenses.IncTypeSpherical = true;
-
-            Cataloglenses.IncTypeGRIN = false;
-
-            Cataloglenses.IncTypeAspheric = false;
-
-            Cataloglenses.IncTypeToroidal = false;
-
-            Cataloglenses.UseEPD = true;
-
-            Cataloglenses.UseEFL = true;
-
-            Cataloglenses.MinEPD = 5.0;
-
-            Cataloglenses.MaxEPD = 50;
-
-            Cataloglenses.MinEFL = 40.0;
-
-            Cataloglenses.MaxEFL = 62.0;
-
-            Cataloglenses.Run();
-
-            int matchlens = Cataloglenses.MatchingLenses;
-
-            Console.WriteLine(matchlens);
+            if(MinVL1 == "THORLABS")
+            {
 
 
+                string VendorName = "THORLABS";
+
+                int elementNumber = 1;
+
+                Cataloglenses.SelectedVendor = VendorName;
+
+                Cataloglenses.NumberOfElements = elementNumber;
+
+                // Default Check box setting
+
+                Cataloglenses.IncShapeEqui = true;
+
+                Cataloglenses.IncShapeBi = true;
+
+                Cataloglenses.IncShapePlano = true;
+
+                Cataloglenses.IncShapeMeniscus = true;
+
+                Cataloglenses.IncTypeSpherical = true;
+
+                Cataloglenses.IncTypeGRIN = false;
+
+                Cataloglenses.IncTypeAspheric = false;
+
+                Cataloglenses.IncTypeToroidal = false;
+
+                Cataloglenses.UseEPD = true;
+
+                Cataloglenses.UseEFL = false;
+
+                Cataloglenses.MinEPD = 5.0;
+
+                Cataloglenses.MaxEPD = 50;
+
+                //Cataloglenses.MinEFL = 40.0;
+
+                //Cataloglenses.MaxEFL = 62.0;
+
+                Cataloglenses.Run();
+
+                int matchlens = Cataloglenses.MatchingLenses;
+
+                //Console.WriteLine(matchlens);
+
+                // Add matching lenses to firstlist
+
+                for (int x = 0; x < matchlens; x++)
+                {
+
+                    lenslist1.Add(Cataloglenses.GetResult(x).LensName);
+
+                }
+
+                // Output into LDE for selected lens
+
+            }
+
+            for (int y = 0; y < lenslist1.Count; y++)
+            {
+                if (lenslist1[y] == MinLP1)
+                {
+                    //Console.WriteLine(MinLP1 + "\n");
+
+                    Cataloglenses.GetResult(y).InsertLensSeq(2, true, false);
+                }
+
+            }
+
+
+            // ------------------------------------------------------------------------------
+
+            if (MinVL2 == "EDMUND OPTICS")
+            {
+
+
+                string VendorName = "EDMUND OPTICS";
+
+                int elementNumber = 1;
+
+                Cataloglenses.SelectedVendor = VendorName;
+
+                Cataloglenses.NumberOfElements = elementNumber;
+
+                // Default Check box setting
+
+                Cataloglenses.IncShapeEqui = true;
+
+                Cataloglenses.IncShapeBi = true;
+
+                Cataloglenses.IncShapePlano = true;
+
+                Cataloglenses.IncShapeMeniscus = true;
+
+                Cataloglenses.IncTypeSpherical = true;
+
+                Cataloglenses.IncTypeGRIN = false;
+
+                Cataloglenses.IncTypeAspheric = false;
+
+                Cataloglenses.IncTypeToroidal = false;
+
+                Cataloglenses.UseEPD = true;
+
+                Cataloglenses.UseEFL = false;
+
+                Cataloglenses.MinEPD = 5.0;
+
+                Cataloglenses.MaxEPD = 50;
+
+                //Cataloglenses.MinEFL = 40.0;
+
+                //Cataloglenses.MaxEFL = 62.0;
+
+                Cataloglenses.Run();
+
+                int matchlens = Cataloglenses.MatchingLenses;
+
+                //Console.WriteLine(matchlens);
+
+                // Add matching lenses to firstlist
+
+                for (int x = 0; x < matchlens; x++)
+                {
+
+                    lenslist2.Add(Cataloglenses.GetResult(x).LensName);
+
+                }
+
+                // Output into LDE for selected lens
+
+            }
+
+            for (int y = 0; y < lenslist2.Count; y++)
+            {
+                if (lenslist2[y] == "45379")
+                {
+                    //Console.WriteLine(MinLP1 + "\n");
+
+                    Cataloglenses.GetResult(y).InsertLensSeq(4, true, false);
+                }
+
+            }
 
 
 
 
+            // ------------------------------------------------------------------------------
 
+            if (MinVL3 == "THORLABS")
+            {
+
+
+                string VendorName = "THORLABS";
+
+                int elementNumber = 1;
+
+                Cataloglenses.SelectedVendor = VendorName;
+
+                Cataloglenses.NumberOfElements = elementNumber;
+
+                // Default Check box setting
+
+                Cataloglenses.IncShapeEqui = true;
+
+                Cataloglenses.IncShapeBi = true;
+
+                Cataloglenses.IncShapePlano = true;
+
+                Cataloglenses.IncShapeMeniscus = true;
+
+                Cataloglenses.IncTypeSpherical = true;
+
+                Cataloglenses.IncTypeGRIN = false;
+
+                Cataloglenses.IncTypeAspheric = false;
+
+                Cataloglenses.IncTypeToroidal = false;
+
+                Cataloglenses.UseEPD = true;
+
+                Cataloglenses.UseEFL = false;
+
+                Cataloglenses.MinEPD = 5.0;
+
+                Cataloglenses.MaxEPD = 50;
+
+                //Cataloglenses.MinEFL = 40.0;
+
+                //Cataloglenses.MaxEFL = 62.0;
+
+                Cataloglenses.Run();
+
+                int matchlens = Cataloglenses.MatchingLenses;
+
+                //Console.WriteLine(matchlens);
+
+                // Add matching lenses to firstlist
+
+                for (int x = 0; x < matchlens; x++)
+                {
+
+                    lenslist3.Add(Cataloglenses.GetResult(x).LensName);
+
+                }
+
+                // Output into LDE for selected lens
+
+            }
+
+            for (int y = 0; y < lenslist3.Count; y++)
+            {
+                if (lenslist3[y] == MinLP3)
+                {
+                    //Console.WriteLine(MinLP1 + "\n");
+
+                    Cataloglenses.GetResult(y).InsertLensSeq(6, true, false);
+                }
+
+            }
+
+
+
+          
 
          //   MaterialCatalogs.AddCatalog(string) = thor;
 
@@ -1192,7 +1393,6 @@ namespace BXwithZemax
 
             TheLDE.GetSurfaceAt(1).Thickness = 20;
 
-            TheLDE.GetSurfaceAt(7).Thickness = 20;
 
 
             T1.Add(TheLDE.GetSurfaceAt(3).Thickness);
@@ -1236,7 +1436,7 @@ namespace BXwithZemax
 
             ISolveData configvariable = TheMCE.GetOperandAt(1).GetOperandCell(1).CreateSolveType(ZOSAPI.Editors.SolveType.Variable);
 
-            
+
 
 
             // Set values of opeand for each configurations
@@ -1249,7 +1449,7 @@ namespace BXwithZemax
                 TheMCE.GetOperandAt(2).GetOperandCell(3).SetSolveData(configvariable);
 
 
-               
+
                 MCOperand1.GetOperandCell(2).DoubleValue = T1[1];
                 MCOperand2.GetOperandCell(2).DoubleValue = T2[1];
                 TheMCE.GetOperandAt(1).GetOperandCell(2).SetSolveData(configvariable);
@@ -1262,6 +1462,9 @@ namespace BXwithZemax
                 TheMCE.GetOperandAt(2).GetOperandCell(1).SetSolveData(configvariable);
 
             }
+
+            TheLDE.GetSurfaceAt(7).Thickness = 20;
+
 
             //-------------------------------
 
