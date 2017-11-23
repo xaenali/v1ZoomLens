@@ -20,6 +20,7 @@ namespace BXwithZemax
     
     // InputMax = user input value for Max magnification input
     // InputMin = user input value for Min magnification input
+    // Input = The inputs for magnification from user to to get the distances for each input 
     // Mx = Max magnification possible
     // My = Min magnification possible
 
@@ -31,10 +32,10 @@ namespace BXwithZemax
      
     class Program
     {
-        public static double InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2, SelF1, SelF2, SelF3;
-        public static string MinVL1, MinVL2, MinVL3, MaxVL1, MaxVL2, MaxVL3, MinLP1, MinLP2, MinLP3, MaxLP1, MaxLP2, MaxLP3;
-        public static List<double> Temp1 = new List<double>(); // List for Distance 1
-        public static List<double> Temp2 = new List<double>(); // List for Distance 2
+        public static double Input, InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2;
+        public static string VendorL1, VendorL2, VendorL3, LP1, LP2, LP3; // Vendors and Lenspart variable to be used in MinTrack, Maxtrack and in Standalone application as sorted out for Maxtrack or Min track length
+        public static List<double> Temp1 = new List<double>(); // List for Distance 1 that will be used to add thickness in Zemax LDE
+        public static List<double> Temp2 = new List<double>(); // List for Distance 2 that will be used to add thickness in Zemax LDE
         public static List<string> LPTemp1 = new List<string>(); // List for lens part 1
         public static List<string> LPTemp2 = new List<string>(); // List for lens part 2
         public static List<string> LPTemp3 = new List<string>(); // List for lens part 3
@@ -674,7 +675,7 @@ namespace BXwithZemax
 
                         Console.WriteLine("Mintrackvalue = {0} with F1 = {1}, F2 = {2} and F3 = {3} and with EPD1 = {4}, EPD2= {5}, EPD3 = {6} \n", MaxtrackList.Min(), F1List[MaxtrackList.IndexOf(MaxtrackList.Min())], F2List[MaxtrackList.IndexOf(MaxtrackList.Min())], F3List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD1List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD2List[MaxtrackList.IndexOf(MaxtrackList.Min())], EPD3List[MaxtrackList.IndexOf(MaxtrackList.Min())]);
 
-                        Console.WriteLine("The Lens Part for F1 = {0}, F2 = {1} and F3 = {2} \n", vendorList1[MaxtrackList.IndexOf(MaxtrackList.Min())], vendorList2[MaxtrackList.IndexOf(MaxtrackList.Min())], vendorList3[MaxtrackList.IndexOf(MaxtrackList.Min())]);
+                        Console.WriteLine("The Lens Part for F1 = {0}, F2 = {1} and F3 = {2} \n", LensList1[MaxtrackList.IndexOf(MaxtrackList.Min())], LensList2[MaxtrackList.IndexOf(MaxtrackList.Min())], LensList3[MaxtrackList.IndexOf(MaxtrackList.Min())]);
 
                         Console.WriteLine("The Mintrackvalue can provide Max Magnifiaction = {0} and Min Magnification = {1} \n", MxList[MaxtrackList.IndexOf(MaxtrackList.Min())], MyList[MaxtrackList.IndexOf(MaxtrackList.Min())]);
                     }
@@ -728,7 +729,7 @@ namespace BXwithZemax
 
         public static double Maxtractcal(List<double> F1, List<double> F2, List<double> F3, List<double> EP1, List<double> EP2, List<double> EP3)
         {
-            double Maxd1, Maxd2, MaxInput, MaxF1, MaxF2, MaxF3, Maxa1, Maxa2, Maxb1, Maxb2, MaxMx, MaxMy, MaxMxratioMy;
+            double Maxd1, Maxd2, MaxF1, MaxF2, MaxF3, Maxa1, Maxa2, Maxb1, Maxb2, MaxMx, MaxMy, MaxMxratioMy;
 
             int a = 1;
 
@@ -741,31 +742,27 @@ namespace BXwithZemax
                 a = a + 1;
             }
 
+            // Take the values for focallengths, Lensparts and vendors as obtained at Maximum track length
+
             MaxF1 = F1List[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
             MaxF2 = F2List[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
             MaxF3 = F3List[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
-            MaxLP1 = LensList1[MaxtrackList.IndexOf(MaxtrackList.Max())];
+            LP1 = LensList1[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
-            MaxLP2 = LensList2[MaxtrackList.IndexOf(MaxtrackList.Max())];
+            LP2 = LensList2[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
-            MaxLP3 = LensList3[MaxtrackList.IndexOf(MaxtrackList.Max())];
+            LP3 = LensList3[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
-            MaxVL1 = vendorList1[MaxtrackList.IndexOf(MaxtrackList.Max())];
+            VendorL1 = vendorList1[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
-            MaxVL2 = vendorList2[MaxtrackList.IndexOf(MaxtrackList.Max())];
+            VendorL2 = vendorList2[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
-            MaxVL3 = vendorList3[MaxtrackList.IndexOf(MaxtrackList.Max())];
+            VendorL3 = vendorList3[MaxtrackList.IndexOf(MaxtrackList.Max())];
 
-
-            SelF1 = MaxF1;
-
-            SelF2 = MaxF2;
-
-            SelF3 = MaxF3;
-
+            // Calculate here again all values needed for distance calculation
 
             Maxa1 = Math.Round((double)MaxF1 + MaxF2, 4);
 
@@ -781,6 +778,7 @@ namespace BXwithZemax
 
             MaxMy = Math.Round((double)-Maxb1 / Maxa1, 4);
 
+            // Ask user here for Magnification input to calculate the distance for the respective Manification
 
             while (true)
             {
@@ -789,7 +787,7 @@ namespace BXwithZemax
 
                 // Check for value other than numerics
 
-                while (!Double.TryParse(Console.ReadLine(), out MaxInput))
+                while (!Double.TryParse(Console.ReadLine(), out Input))
                 {
 
                     Console.WriteLine("Please enter numeric value \n");
@@ -800,9 +798,9 @@ namespace BXwithZemax
 
                 Console.WriteLine("\n");
 
-                if (MaxInput != 000)
+                if (Input != 000)
                 {
-                    if ((MaxInput <= InputMax) && (MaxInput >= InputMin))
+                    if ((Input <= InputMax) && (Input >= InputMin))
                     {
 
                         Console.WriteLine("Conditions satified \n");
@@ -810,9 +808,9 @@ namespace BXwithZemax
 
                         //Calculate d1 and d2 for the Input Magnification
 
-                        Maxd1 = Math.Round((double)MaxF1 + MaxF2 + ((MaxF1 * MaxF2) / (MaxInput * MaxF3)), 4);
+                        Maxd1 = Math.Round((double)MaxF1 + MaxF2 + ((MaxF1 * MaxF2) / (Input * MaxF3)), 4);
 
-                        Maxd2 = Math.Round((double)MaxF2 + MaxF3 + ((MaxF2 * MaxF3 * MaxInput) / (MaxF1)), 4);
+                        Maxd2 = Math.Round((double)MaxF2 + MaxF3 + ((MaxF2 * MaxF3 * Input) / (MaxF1)), 4);
 
                         if ((Maxd1 >= -0.012) && (Maxd1 < 0))
                         {
@@ -825,17 +823,21 @@ namespace BXwithZemax
                                 Maxd2 = 0;
                             }
 
-                        Console.WriteLine("The system has d1 = {0} and d2 = {1} for the Input Magnification = {2} \n", Maxd1, Maxd2, MaxInput);
+                        Console.WriteLine("The system has d1 = {0} and d2 = {1} for the Input Magnification = {2} \n", Maxd1, Maxd2, Input);
+
+                        // Add distances to temporay list and use later to add these as thickness in Zemax LDE
 
                         Temp1.Add(Maxd1);
 
                         Temp2.Add(Maxd2);
 
-                        LPTemp1.Add(MaxLP1);
+                        // Add Lenspart to temporay list and use later to add these in Zemax LDE
+                        
+                        //LPTemp1.Add(LP1);
 
-                        LPTemp2.Add(MaxLP2);
+                        //LPTemp2.Add(LP2);
 
-                        LPTemp3.Add(MaxLP3);
+                        //LPTemp3.Add(LP3);
 
 
 
@@ -843,7 +845,7 @@ namespace BXwithZemax
 
                     else
 
-                        if ((MaxInput > InputMax) || (MaxInput < InputMin))
+                        if ((Input > InputMax) || (Input < InputMin))
                         {
 
 
@@ -857,9 +859,11 @@ namespace BXwithZemax
 
                 }
 
+                    // Exit here to initialize Zemax when condition satisfies
+
                 else
 
-                    if (MaxInput == 000)
+                    if (Input == 000)
                     {
                         ZemaxInitialize();
                     }
@@ -873,7 +877,7 @@ namespace BXwithZemax
 
         public static double Mintrackcal(List<double> F1, List<double> F2, List<double> F3, List<double> EP1, List<double> EP2, List<double> EP3)
         {
-            double MinInput, MinF1, MinF2, MinF3, Mina1, Mina2, Minb1, Minb2, MinMx, MinMy, MinMxratioMy;
+            double  MinF1, MinF2, MinF3, Mina1, Mina2, Minb1, Minb2, MinMx, MinMy, MinMxratioMy;
 
             int a = 1;
 
@@ -888,30 +892,28 @@ namespace BXwithZemax
 
             }
 
+            // Take the values for focallengths, Lensparts and vendors as obtained at Minimum track length
+
             MinF1 = F1List[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
             MinF2 = F2List[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
             MinF3 = F3List[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
-            MinLP1 = LensList1[MaxtrackList.IndexOf(MaxtrackList.Min())];
+            LP1 = LensList1[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
-            MinLP2 = LensList2[MaxtrackList.IndexOf(MaxtrackList.Min())];
+            LP2 = LensList2[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
-            MinLP3 = LensList3[MaxtrackList.IndexOf(MaxtrackList.Min())];
+            LP3 = LensList3[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
-            MinVL1 = vendorList1[MaxtrackList.IndexOf(MaxtrackList.Min())];
+            VendorL1 = vendorList1[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
-            MinVL2 = vendorList2[MaxtrackList.IndexOf(MaxtrackList.Min())];
+            VendorL2 = vendorList2[MaxtrackList.IndexOf(MaxtrackList.Min())];
 
-            MinVL3 = vendorList3[MaxtrackList.IndexOf(MaxtrackList.Min())]; 
+            VendorL3 = vendorList3[MaxtrackList.IndexOf(MaxtrackList.Min())]; 
 
-            SelF1 = MinF1;
 
-            SelF2 = MinF2;
-
-            SelF3 = MinF3;
-
+            // Calculate here again all values needed for distance calculation
 
             Mina1 = Math.Round((double)MinF1 + MinF2, 4);
 
@@ -928,6 +930,8 @@ namespace BXwithZemax
             MinMy = Math.Round((double)-Minb1 / Mina1, 4);
 
 
+            // Ask user here for Magnification input to calculate the distance for the respective Manification
+
             while (true)
             {
 
@@ -935,16 +939,16 @@ namespace BXwithZemax
 
                 // Check for value other than numerics
 
-                while (!Double.TryParse(Console.ReadLine(), out MinInput))
+                while (!Double.TryParse(Console.ReadLine(), out Input))
                 {
                     Console.WriteLine("Please enter numeric value \n");
 
                     Console.WriteLine("Enter Magnification upto 4 decimal point or Enter (000) to quit and see Zemax File \n");
                 }
 
-                if (MinInput != 000)
+                if (Input != 000)
                 {
-                    if ((MinInput <= InputMax) && (MinInput >= InputMin))
+                    if ((Input <= InputMax) && (Input >= InputMin))
                     {
 
                         Console.WriteLine("Conditions satified \n");
@@ -952,9 +956,9 @@ namespace BXwithZemax
 
                         //Calculate d1 and d2 for the Input Magnification
 
-                        Mind1 = Math.Round((double)MinF1 + MinF2 + ((MinF1 * MinF2) / (MinInput * MinF3)), 4);
+                        Mind1 = Math.Round((double)MinF1 + MinF2 + ((MinF1 * MinF2) / (Input * MinF3)), 4);
 
-                        Mind2 = Math.Round((double)MinF2 + MinF3 + ((MinF2 * MinF3 * MinInput) / (MinF1)), 4);
+                        Mind2 = Math.Round((double)MinF2 + MinF3 + ((MinF2 * MinF3 * Input) / (MinF1)), 4);
 
                         if ((Mind1 >= -0.012) && (Mind1 < 0))
                         {
@@ -967,23 +971,27 @@ namespace BXwithZemax
                                 Mind2 = 0;
                             }
 
-                        Console.WriteLine("The system has d1 = {0} and d2 = {1} for the Input Magnification = {2} \n", Mind1, Mind2, MinInput);
+                        Console.WriteLine("The system has d1 = {0} and d2 = {1} for the Input Magnification = {2} \n", Mind1, Mind2, Input);
+
+                        // Add distances to temporay list and use later to add these as thickness in Zemax LDE
 
                         Temp1.Add(Mind1);
 
                         Temp2.Add(Mind2);
 
-                        LPTemp1.Add(MinLP1);
+                        // Add Lensparts to temporay list and use later to add these in Zemax LDE
+                        
+                        //LPTemp1.Add(LP1);
 
-                        LPTemp2.Add(MinLP2);
+                        //LPTemp2.Add(LP2);
 
-                        LPTemp3.Add(MinLP3);
+                        //LPTemp3.Add(LP3);
 
                     }
 
                     else
 
-                        if ((MinInput > InputMax) || (MinInput < InputMin))
+                        if ((Input > InputMax) || (Input < InputMin))
                         {
 
 
@@ -999,7 +1007,10 @@ namespace BXwithZemax
 
                 else
 
-                    if (MinInput == 000)
+                    // Exit here to initialize Zemax when condition satisfies
+
+
+                    if (Input == 000)
                     {
                         // See the output of the stored distances
 
@@ -1076,15 +1087,6 @@ namespace BXwithZemax
 
             TheSystem.New(false);
 
-            // Open MCE and MFE
-
-            //TheSystem.MCE.ShowMCE();
-
-            //TheSystem.MFE.ShowMFE();
-
-
-
-            //! [e19s01_cs]
             // ISystemData represents the System Explorer in GUI.
             // We access options in System Explorer through ISystemData in ZOS-API
             ISystemData TheSystemData = TheSystem.SystemData;
@@ -1092,10 +1094,9 @@ namespace BXwithZemax
             TheSystemData.Aperture.SemiDiameterMargin = 2;
             TheSystemData.Aperture.AFocalImageSpace = true;
             TheSystemData.Wavelengths.GetWavelength(1).Wavelength = 1.06;
-            //! [e19s01_cs]
 
-            // Get interface of Lens Data Editor and add 3 surfaces.
-            //------------------------------------
+
+            // Add Material Catlogs
 
             ISDMaterialCatalogData sysCat = TheSystem.SystemData.MaterialCatalogs;
 
@@ -1126,6 +1127,8 @@ namespace BXwithZemax
             List<string> lenslist3 = new List<string>();
 
 
+            // Get the interface for Lens Catalogs
+
 
             ILensCatalogs Cataloglenses = TheSystem.Tools.OpenLensCatalogs();
 
@@ -1133,15 +1136,29 @@ namespace BXwithZemax
 
             // Check for Vendor for focallength 1
 
-            if(MinVL1 == "THORLABS")
+            if (VendorL1 == "THORLABS" || VendorL1 == "EDMUND OPTICS")
             {
+                if (VendorL1 == "THORLABS")
+                {
+                    string VendorName = "THORLABS";
 
+                    Cataloglenses.SelectedVendor = VendorName;
 
-                string VendorName = "THORLABS";
+                }
+
+                else
+
+                    if (VendorL1 == "EDMUND OPTICS")
+                    {
+                        string VendorName = "EDMUND OPTICS";
+
+                        Cataloglenses.SelectedVendor = VendorName;
+
+                    }
+
 
                 int elementNumber = 1;
 
-                Cataloglenses.SelectedVendor = VendorName;
 
                 Cataloglenses.NumberOfElements = elementNumber;
 
@@ -1196,27 +1213,51 @@ namespace BXwithZemax
 
             for (int y = 0; y < lenslist1.Count; y++)
             {
-                if (lenslist1[y] == MinLP1)
+
+                if (VendorL1 == "THORLABS" && lenslist1[y] == LP1)
                 {
                     //Console.WriteLine(MinLP1 + "\n");
 
                     Cataloglenses.GetResult(y).InsertLensSeq(2, true, false);
                 }
 
+                if (VendorL1 == "EDMUND OPTICS" && "EO-" + lenslist1[y] == LP1)
+                {
+                    //Console.WriteLine(MinLP1 + "\n");
+
+                    Cataloglenses.GetResult(y).InsertLensSeq(2, true, false);
+                }
+
+
             }
 
 
             // ------------------------------------------------------------------------------
 
-            if (MinVL2 == "EDMUND OPTICS")
+            if (VendorL2 == "THORLABS" || VendorL2 == "EDMUND OPTICS")
             {
+                if (VendorL2 == "THORLABS")
+                {
+                    string VendorName = "THORLABS";
+
+                    Cataloglenses.SelectedVendor = VendorName;
+
+                }
+
+                else
+
+                    if (VendorL2 == "EDMUND OPTICS")
+                    {
+                        string VendorName = "EDMUND OPTICS";
+
+                        Cataloglenses.SelectedVendor = VendorName;
+
+                    }
 
 
-                string VendorName = "EDMUND OPTICS";
 
                 int elementNumber = 1;
 
-                Cataloglenses.SelectedVendor = VendorName;
 
                 Cataloglenses.NumberOfElements = elementNumber;
 
@@ -1271,7 +1312,14 @@ namespace BXwithZemax
 
             for (int y = 0; y < lenslist2.Count; y++)
             {
-                if (lenslist2[y] == "45379")
+                if (VendorL2 == "THORLABS" && lenslist2[y] == LP2)
+                {
+                    //Console.WriteLine(MinLP1 + "\n");
+
+                    Cataloglenses.GetResult(y).InsertLensSeq(4, true, false);
+                }
+
+                if (VendorL2 == "EDMUND OPTICS" && "EO-" + lenslist2[y] == LP2)
                 {
                     //Console.WriteLine(MinLP1 + "\n");
 
@@ -1285,15 +1333,28 @@ namespace BXwithZemax
 
             // ------------------------------------------------------------------------------
 
-            if (MinVL3 == "THORLABS")
+            if (VendorL3 == "THORLABS" || VendorL3 == "EDMUND OPTICS")
             {
+                if (VendorL3 == "THORLABS")
+                {
+                    string VendorName = "THORLABS";
 
+                    Cataloglenses.SelectedVendor = VendorName;
 
-                string VendorName = "THORLABS";
+                }
+
+                else
+
+                    if (VendorL3 == "EDMUND OPTICS")
+                    {
+                        string VendorName = "EDMUND OPTICS";
+
+                        Cataloglenses.SelectedVendor = VendorName;
+
+                    }
+
 
                 int elementNumber = 1;
-
-                Cataloglenses.SelectedVendor = VendorName;
 
                 Cataloglenses.NumberOfElements = elementNumber;
 
@@ -1348,7 +1409,14 @@ namespace BXwithZemax
 
             for (int y = 0; y < lenslist3.Count; y++)
             {
-                if (lenslist3[y] == MinLP3)
+                if (VendorL3 == "THORLABS" && lenslist3[y] == LP3)
+                {
+                    //Console.WriteLine(MinLP1 + "\n");
+
+                    Cataloglenses.GetResult(y).InsertLensSeq(6, true, false);
+                }
+
+                if (VendorL3 == "EDMUND OPTICS" && "EO-" + lenslist3[y] == LP3)
                 {
                     //Console.WriteLine(MinLP1 + "\n");
 
@@ -1358,10 +1426,8 @@ namespace BXwithZemax
             }
 
 
-
-          
-
-         //   MaterialCatalogs.AddCatalog(string) = thor;
+            // Get interface of Lens Data Editor
+            //------------------------------------
 
             ILensDataEditor TheLDE = TheSystem.LDE;
             //TheLDE.InsertNewSurfaceAt(2);
@@ -1402,35 +1468,34 @@ namespace BXwithZemax
             T2 = Temp2;
 
             // Get interface of the Multi-Configuration Editor
+
             IMultiConfigEditor TheMCE = TheSystem.MCE;
-            //! [e18s01_cs]
+
+
             // Add two configurations (totally 3)
+
             TheMCE.AddConfiguration(false);
             TheMCE.AddConfiguration(false);
 
-            //! [e18s01_cs]
-
-            //! [e18s02_cs]
             // Add one operand (totally 2)
-            TheMCE.AddOperand();
-            //! [e18s02_cs]
 
-            //! [e18s03_cs]
+            TheMCE.AddOperand();
+
             // Get interface of each operand
+
             IMCERow MCOperand1 = TheMCE.GetOperandAt(1);
             IMCERow MCOperand2 = TheMCE.GetOperandAt(2);
+
             // Change both operands' type to THIC
+
             MCOperand1.ChangeType(MultiConfigOperandType.THIC);
             MCOperand2.ChangeType(MultiConfigOperandType.THIC);
-            //! [e18s03_cs]
 
-            //! [e18s04_cs]
             // Set parameters of operands
             // If the type of operand is THIC, the first parameter here means surface number
-            MCOperand1.Param1 = 2;
-            MCOperand2.Param1 = 3;
-            //! [e18s04_cs]
 
+            MCOperand1.Param1 = 3;
+            MCOperand2.Param1 = 5;
 
             // Setup Variables
 
@@ -1497,7 +1562,7 @@ namespace BXwithZemax
 
             Operand_REAYop3_CONF1.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAYop3_CONF1.GetCellAt(2).IntegerValue = 5;
+            Operand_REAYop3_CONF1.GetCellAt(2).IntegerValue = 7;
 
             Operand_REAYop3_CONF1.GetCellAt(7).DoubleValue = 1;
 
@@ -1505,7 +1570,7 @@ namespace BXwithZemax
 
             Operand_RANGop4_CONF1.ChangeType(MeritOperandType.RANG);
 
-            Operand_RANGop4_CONF1.GetCellAt(2).IntegerValue = 4;
+            Operand_RANGop4_CONF1.GetCellAt(2).IntegerValue = 7;
 
             Operand_RANGop4_CONF1.GetCellAt(7).DoubleValue = 1;
 
@@ -1557,7 +1622,7 @@ namespace BXwithZemax
 
             Operand_CTGTop8_CONF1.GetCellAt(2).IntegerValue = 3;
 
-            Operand_CTGTop8_CONF1.Target = 0.1;
+            Operand_CTGTop8_CONF1.Target = 1;
 
             Operand_CTGTop8_CONF1.Weight = 1;
 
@@ -1565,11 +1630,11 @@ namespace BXwithZemax
 
             Operand_CTGTop9_CONF1.ChangeType(MeritOperandType.CTGT);
 
-            Operand_CTGTop9_CONF1.GetCellAt(2).IntegerValue = 3;
+            Operand_CTGTop9_CONF1.GetCellAt(2).IntegerValue = 5;
 
-            Operand_CTGTop9_CONF1.Target = 0.1;
+            Operand_CTGTop9_CONF1.Target = 1;
 
-            Operand_CTGTop9_CONF1.Weight = 1;
+            Operand_CTGTop9_CONF1.Weight = 0;
 
             IMFERow Operand_DIVIop23_CONF1 = TheMFE.InsertNewOperandAt(10);
 
@@ -1579,6 +1644,9 @@ namespace BXwithZemax
 
             Operand_DIVIop23_CONF1.GetCellAt(3).IntegerValue = 3;
 
+            Operand_DIVIop23_CONF1.Target = 0.32;
+
+            Operand_DIVIop23_CONF1.Weight = 1;
 
 
             //-------------------------------------------
@@ -1605,7 +1673,7 @@ namespace BXwithZemax
 
             Operand_REAYop13_CONF2.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAYop13_CONF2.GetCellAt(2).IntegerValue = 5;
+            Operand_REAYop13_CONF2.GetCellAt(2).IntegerValue = 7;
 
             Operand_REAYop13_CONF2.GetCellAt(7).DoubleValue = 1;
 
@@ -1613,13 +1681,13 @@ namespace BXwithZemax
 
             Operand_RANGop14_CONF2.ChangeType(MeritOperandType.RANG);
 
-            Operand_RANGop14_CONF2.GetCellAt(2).IntegerValue = 4;
+            Operand_RANGop14_CONF2.GetCellAt(2).IntegerValue = 7;
 
             Operand_RANGop14_CONF2.GetCellAt(7).DoubleValue = 1;
 
             Operand_RANGop14_CONF2.Target = 0;
 
-            Operand_RANGop14_CONF2.Weight = 10;
+            Operand_RANGop14_CONF2.Weight = 1;
 
             Operand_RANGop14_CONF2.GetCellAt(7).DoubleValue = 1;
 
@@ -1665,7 +1733,7 @@ namespace BXwithZemax
 
             Operand_CTGTop18_CONF2.GetCellAt(2).IntegerValue = 3;
 
-            Operand_CTGTop18_CONF2.Target = 0.1;
+            Operand_CTGTop18_CONF2.Target = 1;
 
             Operand_CTGTop18_CONF2.Weight = 1;
 
@@ -1673,11 +1741,11 @@ namespace BXwithZemax
 
             Operand_CTGTop19_CONF2.ChangeType(MeritOperandType.CTGT);
 
-            Operand_CTGTop19_CONF2.GetCellAt(2).IntegerValue = 3;
+            Operand_CTGTop19_CONF2.GetCellAt(2).IntegerValue = 5;
 
-            Operand_CTGTop19_CONF2.Target = 0.1;
+            Operand_CTGTop19_CONF2.Target = 1;
 
-            Operand_CTGTop19_CONF2.Weight = 1;
+            Operand_CTGTop19_CONF2.Weight = 0;
 
 
             IMFERow Operand_DIVIop20_CONF2 = TheMFE.InsertNewOperandAt(20);
@@ -1687,6 +1755,10 @@ namespace BXwithZemax
             Operand_DIVIop20_CONF2.GetCellAt(2).IntegerValue = 12;
 
             Operand_DIVIop20_CONF2.GetCellAt(3).IntegerValue = 13;
+
+            Operand_DIVIop20_CONF2.Target = 1.08;
+
+            Operand_DIVIop20_CONF2.Weight = 1;
 
 
             //---------------------------------------------------
@@ -1713,7 +1785,7 @@ namespace BXwithZemax
 
             Operand_REAYop33_CONF3.ChangeType(MeritOperandType.REAY);
 
-            Operand_REAYop33_CONF3.GetCellAt(2).IntegerValue = 5;
+            Operand_REAYop33_CONF3.GetCellAt(2).IntegerValue = 7;
 
             Operand_REAYop33_CONF3.GetCellAt(7).DoubleValue = 1;
 
@@ -1721,13 +1793,13 @@ namespace BXwithZemax
 
             Operand_RANGop24_CONF3.ChangeType(MeritOperandType.RANG);
 
-            Operand_RANGop24_CONF3.GetCellAt(2).IntegerValue = 4;
+            Operand_RANGop24_CONF3.GetCellAt(2).IntegerValue = 7;
 
             Operand_RANGop24_CONF3.GetCellAt(7).DoubleValue = 1;
 
             Operand_RANGop24_CONF3.Target = 0;
 
-            Operand_RANGop24_CONF3.Weight = 10;
+            Operand_RANGop24_CONF3.Weight = 1;
 
             Operand_RANGop24_CONF3.GetCellAt(7).DoubleValue = 1;
 
@@ -1773,7 +1845,7 @@ namespace BXwithZemax
 
             Operand_CTGTop28_CONF3.GetCellAt(2).IntegerValue = 3;
 
-            Operand_CTGTop28_CONF3.Target = 0.1;
+            Operand_CTGTop28_CONF3.Target = 1;
 
             Operand_CTGTop28_CONF3.Weight = 1;
 
@@ -1781,11 +1853,11 @@ namespace BXwithZemax
 
             Operand_CTGTop29_CONF3.ChangeType(MeritOperandType.CTGT);
 
-            Operand_CTGTop29_CONF3.GetCellAt(2).IntegerValue = 3;
+            Operand_CTGTop29_CONF3.GetCellAt(2).IntegerValue = 5;
 
-            Operand_CTGTop29_CONF3.Target = 0.1;
+            Operand_CTGTop29_CONF3.Target = 1;
 
-            Operand_CTGTop29_CONF3.Weight = 1;
+            Operand_CTGTop29_CONF3.Weight = 0;
 
 
             IMFERow Operand_DIVIop30_CONF3 = TheMFE.InsertNewOperandAt(30);
@@ -1795,6 +1867,10 @@ namespace BXwithZemax
             Operand_DIVIop30_CONF3.GetCellAt(2).IntegerValue = 22;
 
             Operand_DIVIop30_CONF3.GetCellAt(3).IntegerValue = 23;
+
+            Operand_DIVIop30_CONF3.Target = 2.92;
+
+            Operand_DIVIop30_CONF3.Weight = 1;
 
 
             // Local optimisation till completion
