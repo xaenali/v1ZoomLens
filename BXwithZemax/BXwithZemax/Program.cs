@@ -32,7 +32,7 @@ namespace BXwithZemax
      
     class Program
     {
-        public static double Input, InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2;
+        public static double Input, InputMax, InputMin, InputbeamDia, EPDConstrainF1, EPDConstrainF3, Mind1, Mind2, MinF1, MinF2, MinF3;
         public static string VendorL1, VendorL2, VendorL3, LP1, LP2, LP3; // Vendors and Lenspart variable to be used in MinTrack, Maxtrack and in Standalone application as sorted out for Maxtrack or Min track length
         public static List<double> Temp1 = new List<double>(); // List for Distance 1 that will be used to add thickness in Zemax LDE
         public static List<double> Temp2 = new List<double>(); // List for Distance 2 that will be used to add thickness in Zemax LDE
@@ -877,7 +877,7 @@ namespace BXwithZemax
 
         public static double Mintrackcal(List<double> F1, List<double> F2, List<double> F3, List<double> EP1, List<double> EP2, List<double> EP3)
         {
-            double  MinF1, MinF2, MinF3, Mina1, Mina2, Minb1, Minb2, MinMx, MinMy, MinMxratioMy;
+            double   Mina1, Mina2, Minb1, Minb2, MinMx, MinMy, MinMxratioMy;
 
             int a = 1;
 
@@ -1588,7 +1588,7 @@ namespace BXwithZemax
 
             Operand_EFLXop5_CONF1.GetCellAt(3).IntegerValue = 3;
 
-            Operand_EFLXop5_CONF1.Target = Operand_EFLXop5_CONF1.GetCellAt(12).DoubleValue;
+            Operand_EFLXop5_CONF1.Target = MinF1;//Operand_EFLXop5_CONF1.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop5_CONF1.Weight = 1;
 
@@ -1600,7 +1600,7 @@ namespace BXwithZemax
 
             Operand_EFLXop6_CONF1.GetCellAt(3).IntegerValue = 5;
 
-            Operand_EFLXop6_CONF1.Target = Operand_EFLXop6_CONF1.GetCellAt(12).DoubleValue;
+            Operand_EFLXop6_CONF1.Target = MinF2; //Operand_EFLXop6_CONF1.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop6_CONF1.Weight = 1;
 
@@ -1612,7 +1612,7 @@ namespace BXwithZemax
 
             Operand_EFLXop7_CONF1.GetCellAt(3).IntegerValue = 7;
 
-            Operand_EFLXop7_CONF1.Target = Operand_EFLXop7_CONF1.GetCellAt(12).DoubleValue;
+            Operand_EFLXop7_CONF1.Target = MinF3;//Operand_EFLXop7_CONF1.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop7_CONF1.Weight = 1;
 
@@ -1699,7 +1699,7 @@ namespace BXwithZemax
 
             Operand_EFLXop15_CONF2.GetCellAt(3).IntegerValue = 3;
 
-            Operand_EFLXop15_CONF2.Target = Operand_EFLXop15_CONF2.GetCellAt(12).DoubleValue;
+            Operand_EFLXop15_CONF2.Target = MinF1;//Operand_EFLXop15_CONF2.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop15_CONF2.Weight = 1;
 
@@ -1711,7 +1711,7 @@ namespace BXwithZemax
 
             Operand_EFLXop16_CONF2.GetCellAt(3).IntegerValue = 5;
 
-            Operand_EFLXop16_CONF2.Target = Operand_EFLXop16_CONF2.GetCellAt(12).DoubleValue;
+            Operand_EFLXop16_CONF2.Target = MinF2;//Operand_EFLXop16_CONF2.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop16_CONF2.Weight = 1;
 
@@ -1723,7 +1723,7 @@ namespace BXwithZemax
 
             Operand_EFLXop17_CONF2.GetCellAt(3).IntegerValue = 7;
 
-            Operand_EFLXop17_CONF2.Target = Operand_EFLXop17_CONF2.GetCellAt(12).DoubleValue;
+            Operand_EFLXop17_CONF2.Target = MinF3;//Operand_EFLXop17_CONF2.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop17_CONF2.Weight = 1;
 
@@ -1811,7 +1811,7 @@ namespace BXwithZemax
 
             Operand_EFLXop25_CONF3.GetCellAt(3).IntegerValue = 3;
 
-            Operand_EFLXop25_CONF3.Target = Operand_EFLXop15_CONF2.GetCellAt(12).DoubleValue;
+            Operand_EFLXop25_CONF3.Target = MinF1;//Operand_EFLXop15_CONF2.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop25_CONF3.Weight = 1;
 
@@ -1823,7 +1823,7 @@ namespace BXwithZemax
 
             Operand_EFLXop26_CONF3.GetCellAt(3).IntegerValue = 5;
 
-            Operand_EFLXop26_CONF3.Target = Operand_EFLXop26_CONF3.GetCellAt(12).DoubleValue;
+            Operand_EFLXop26_CONF3.Target = MinF2;//Operand_EFLXop26_CONF3.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop26_CONF3.Weight = 1;
 
@@ -1835,7 +1835,7 @@ namespace BXwithZemax
 
             Operand_EFLXop27_CONF3.GetCellAt(3).IntegerValue = 7;
 
-            Operand_EFLXop27_CONF3.Target = Operand_EFLXop27_CONF3.GetCellAt(12).DoubleValue;
+            Operand_EFLXop27_CONF3.Target = MinF3;//Operand_EFLXop27_CONF3.GetCellAt(12).DoubleValue;
 
             Operand_EFLXop27_CONF3.Weight = 1;
 
