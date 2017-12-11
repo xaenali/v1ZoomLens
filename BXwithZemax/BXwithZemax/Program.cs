@@ -76,7 +76,7 @@ namespace BXwithZemax
         public static List<string> vendorList2 = new List<string>(); // Initialize vendor for focallength 2
         public static List<string> vendorList3 = new List<string>(); // Initialize vendor for focallength 3
 
-
+        // Add GUI
 
         static void Main(string[] args)
         {
